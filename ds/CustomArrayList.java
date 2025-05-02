@@ -16,6 +16,24 @@ public class CustomArrayList<T> {
         }
         array[size++] = element;
     }
+    
+    public void add(int index, T element) {
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
+        
+        if (size == array.length) {
+            resize();
+        }
+        
+        // Shift elements to make space for new element
+        for (int i = size; i > index; i--) {
+            array[i] = array[i - 1];
+        }
+        
+        array[index] = element;
+        size++;
+    }
 
     @SuppressWarnings("unchecked")
     public T get(int index) {
