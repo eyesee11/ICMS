@@ -1,6 +1,7 @@
 package student;
 
 import model.Student;
+import util.TableFormatter;
 
 public class StudentPanel {
     private Student student;
@@ -11,10 +12,12 @@ public class StudentPanel {
 
     public void viewProfile() {
         System.out.println("\nStudent Profile:");
-        System.out.println("ID: " + student.getId());
-        System.out.println("Name: " + student.getName());
-        System.out.println("Email: " + student.getEmail());
-        System.out.println("Stream: " + student.getStream());
+        TableFormatter table = new TableFormatter("Field", "Value");
+        table.addRow("ID", student.getId());
+        table.addRow("Name", student.getName());
+        table.addRow("Email", student.getEmail());
+        table.addRow("Stream", student.getStream());
+        System.out.println(table.toString());
     }
 
     public void updateProfile(String name, String email) {
@@ -30,9 +33,12 @@ public class StudentPanel {
             System.out.println("No courses assigned yet.");
             return;
         }
+        
+        TableFormatter table = new TableFormatter("No.", "Course");
         for (int i = 0; i < courses.size(); i++) {
-            System.out.println((i + 1) + ". " + courses.get(i));
+            table.addRow(String.valueOf(i + 1), courses.get(i));
         }
+        System.out.println(table.toString());
     }
     
     public void viewAttendance() {
@@ -50,15 +56,14 @@ public class StudentPanel {
     
     public void viewTimetable() {
         System.out.println("\nClass Timetable:");
-        System.out.println("Monday:");
-        System.out.println("  09:00 - 10:30: Mathematics (Room 101)");
-        System.out.println("  11:00 - 12:30: Physics (Room 202)");
-        System.out.println("Tuesday:");
-        System.out.println("  09:00 - 10:30: Computer Science (Lab 301)");
-        System.out.println("  11:00 - 12:30: English (Room 102)");
-        System.out.println("Wednesday:");
-        System.out.println("  09:00 - 10:30: Chemistry (Lab 305)");
-        System.out.println("  11:00 - 12:30: Mathematics (Room 101)");
+        TableFormatter table = new TableFormatter("Day", "Time", "Subject", "Location");
+        table.addRow("Monday", "09:00 - 10:30", "Mathematics", "Room 101");
+        table.addRow("Monday", "11:00 - 12:30", "Physics", "Room 202");
+        table.addRow("Tuesday", "09:00 - 10:30", "Computer Science", "Lab 301");
+        table.addRow("Tuesday", "11:00 - 12:30", "English", "Room 102");
+        table.addRow("Wednesday", "09:00 - 10:30", "Chemistry", "Lab 305");
+        table.addRow("Wednesday", "11:00 - 12:30", "Mathematics", "Room 101");
+        System.out.println(table.toString());
     }
     
     public void viewIssuedBooks() {
@@ -68,8 +73,11 @@ public class StudentPanel {
             System.out.println("No books issued currently.");
             return;
         }
+        
+        TableFormatter table = new TableFormatter("No.", "Book ID");
         for (int i = 0; i < books.size(); i++) {
-            System.out.println((i + 1) + ". Book ID: " + books.get(i));
+            table.addRow(String.valueOf(i + 1), books.get(i));
         }
+        System.out.println(table.toString());
     }
 }

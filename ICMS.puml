@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="1800" height="1100" viewBox="0 0 1800 1100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect x="0" y="0" width="1800" height="1100" fill="#f4f4f9"/>
+
+  <!-- Title -->
+  <text x="900" y="50" font-family="Arial" font-size="28" font-weight="bold" text-anchor="middle" fill="#333">
+    ICMS UML Class Diagram (High-Level)
+  </text>
+
+  <!-- main.ICMS -->
+  <rect x="100" y="120" width="260" height="180" rx="10" fill="#fff" stroke="#333" stroke-width="2"/>
+  <text x="230" y="145" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">main.ICMS</text>
+  <text x="120" y="170" font-family="Arial" font-size="13" fill="#333">- auth: AuthSystem</text>
+  <text x="120" y="190" font-family="Arial" font-size="13" fill="#333">- adminPanel: AdminPanel</text>
+  <text x="120" y="210" font-family="Arial" font-size="13" fill="#333">- library: LibrarySystem</text>
+  <text x="120" y="230" font-family="Arial" font-size="13" fill="#333">- courseManagement: CourseManagement</text>
+  <text x="120" y="250" font-family="Arial" font-size="13" fill="#333">- allBooks: CustomArrayList&lt;Book&gt;</text>
+  <text x="120" y="270" font-family="Arial" font-size="13" fill="#333">+ main(args)</text>
+
+  <!-- admin.AdminPanel -->
+  <rect x="450" y="120" width="260" height="160" rx="10" fill="#fff" stroke="#333" stroke-width="2"/>
+  <text x="580" y="145" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">admin.AdminPanel</text>
+  <text x="470" y="170" font-family="Arial" font-size="13" fill="#333">- students: CustomArrayList&lt;Student&gt;</text>
+  <text x="470" y="190" font-family="Arial" font-size="13" fill="#333">- faculty: CustomArrayList&lt;Faculty&gt;</text>
+  <text x="470" y="210" font-family="Arial" font-size="13" fill="#333">+ addStudent()</text>
+  <text x="470" y="230" font-family="Arial" font-size="13" fill="#333">+ updateStudent()</text>
+  <text x="470" y="250" font-family="Arial" font-size="13" fill="#333">+ addFaculty()</text>
+  <text x="470" y="270" font-family="Arial" font-size="13" fill="#333">+ updateFaculty()</text>
+
+  <!-- student.StudentPanel -->
+  <rect x="750" y="120" width="220" height="120" rx="10" fill="#fff" stroke="#333" stroke-width="2"/>
+  <text x="860" y="145" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">student.StudentPanel</text>
+  <text x="770" y="170" font-family="Arial" font-size="13" fill="#333">- student: Student</text>
+  <text x="770" y="190" font-family="Arial" font-size="13" fill="#333">+ viewProfile()</text>
+  <text x="770" y="210" font-family="Arial" font-size="13" fill="#333">+ updateProfile()</text>
+
+  <!-- faculty.FacultyPanel -->
+  <rect x="1020" y="120" width="220" height="120" rx="10" fill="#fff" stroke="#333" stroke-width="2"/>
+  <text x="1130" y="145" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">faculty.FacultyPanel</text>
+  <text x="1040" y="170" font-family="Arial" font-size="13" fill="#333">- faculty: Faculty</text>
+  <text x="1040" y="190" font-family="Arial" font-size="13" fill="#333">+ viewProfile()</text>
+  <text x="1040" y="210" font-family="Arial" font-size="13" fill="#333">+ updateProfile()</text>
+
+  <!-- library.LibrarySystem -->
+  <rect x="1300" y="120" width="260" height="180" rx="10" fill="#fff" stroke="#333" stroke-width="2"/>
+  <text x="1430" y="145" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">library.LibrarySystem</text>
+  <text x="1320" y="170" font-family="Arial" font-size="13" fill="#333">- issueQueue: CustomQueue&lt;String&gt;</text>
+  <text x="1320" y="190" font-family="Arial" font-size="13" fill="#333">- booksBST: CustomBST&lt;Book&gt;</text>
+  <text x="1320" y="210" font-family="Arial" font-size="13" fill="#333">- issuedBooks: CustomArrayList&lt;String&gt;</text>
+  <text x="1320" y="230" font-family="Arial" font-size="13" fill="#333">+ addBook()</text>
+  <text x="1320" y="250" font-family="Arial" font-size="13" fill="#333">+ issueBook()</text>
+  <text x="1320" y="270" font-family="Arial" font-size="13" fill="#333">+ returnBook()</text>
+
+  <!-- course.CourseManagement -->
+  <rect x="100" y="400" width="260" height="120" rx="10" fill="#fff" stroke="#333" stroke-width="2"/>
+  <text x="230" y="425" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">course.CourseManagement</text>
+  <text x="120" y="450" font-family="Arial" font-size="13" fill="#333">- courses: CustomArrayList&lt;Course&gt;</text>
+  <text x="120" y="470" font-family="Arial" font-size="13" fill="#333">+ addCourse()</text>
+  <text x="120" y="490" font-family="Arial" font-size="13" fill="#333">+ viewCourses()</text>
+
+  <!-- auth.AuthSystem -->
+  <rect x="450" y="400" width="220" height="100" rx="10" fill="#fff" stroke="#333" stroke-width="2"/>
+  <text x="560" y="425" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">auth.AuthSystem</text>
+  <text x="470" y="450" font-family="Arial" font-size="13" fill="#333">- credentials: CustomHashMap</text>
+  <text x="470" y="470" font-family="Arial" font-size="13" fill="#333">- roles: CustomHashMap</text>
+  <text x="470" y="490" font-family="Arial" font-size="13" fill="#333">+ login()</text>
+
+  <!-- model.Student -->
+  <rect x="750" y="400" width="220" height="180" rx="10" fill="#fff" stroke="#333" stroke-width="2"/>
+  <text x="860" y="425" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">model.Student</text>
+  <text x="770" y="450" font-family="Arial" font-size="13" fill="#333">- id: String</text>
+  <text x="770" y="470" font-family="Arial" font-size="13" fill="#333">- name: String</text>
+  <text x="770" y="490" font-family="Arial" font-size="13" fill="#333">- email: String</text>
+  <text x="770" y="510" font-family="Arial" font-size="13" fill="#333">- stream: String</text>
+  <text x="770" y="530" font-family="Arial" font-size="13" fill="#333">- courses: CustomArrayList&lt;String&gt;</text>
+  <text x="770" y="550" font-family="Arial" font-size="13" fill="#333">- issuedBooks: CustomArrayList&lt;String&gt;</text>
+  <text x="770" y="570" font-family="Arial" font-size="13" fill="#333">- attendance: CustomHashMap</text>
+  <text x="770" y="590" font-family="Arial" font-size="13" fill="#333">+ getId(), getName(), ...</text>
+
+  <!-- model.Faculty -->
+  <rect x="1020" y="400" width="220" height="120" rx="10" fill="#fff" stroke="#333" stroke-width="2"/>
+  <text x="1130" y="425" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">model.Faculty</text>
+  <text x="1040" y="450" font-family="Arial" font-size="13" fill="#333">- id: String</text>
+  <text x="1040" y="470" font-family="Arial" font-size="13" fill="#333">- name: String</text>
+  <text x="1040" y="490" font-family="Arial" font-size="13" fill="#333">- email: String</text>
+  <text x="1040" y="510" font-family="Arial" font-size="13" fill="#333">+ getId(), getName(), ...</text>
+
+  <!-- model.Course -->
+  <rect x="1300" y="400" width="180" height="80" rx="10" fill="#fff" stroke="#333" stroke-width="2"/>
+  <text x="1390" y="425" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">model.Course</text>
+  <text x="1310" y="450" font-family="Arial" font-size="13" fill="#333">- id, name, stream, ...</text>
+  <text x="1310" y="470" font-family="Arial" font-size="13" fill="#333">+ getId(), getName(), ...</text>
+
+  <!-- model.Book -->
+  <rect x="1500" y="400" width="180" height="80" rx="10" fill="#fff" stroke="#333" stroke-width="2"/>
+  <text x="1590" y="425" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">model.Book</text>
+  <text x="1510" y="450" font-family="Arial" font-size="13" fill="#333">- id, title, author, ...</text>
+  <text x="1510" y="470" font-family="Arial" font-size="13" fill="#333">+ getId(), getTitle(), ...</text>
+
+  <!-- ds.* Data Structures -->
+  <rect x="100" y="700" width="200" height="60" rx="10" fill="#e3f2fd" stroke="#2196F3" stroke-width="2"/>
+  <text x="200" y="730" font-family="Arial" font-size="15" font-weight="bold" text-anchor="middle" fill="#333">ds.CustomArrayList&lt;T&gt;</text>
+  <rect x="320" y="700" width="200" height="60" rx="10" fill="#e3f2fd" stroke="#2196F3" stroke-width="2"/>
+  <text x="420" y="730" font-family="Arial" font-size="15" font-weight="bold" text-anchor="middle" fill="#333">ds.CustomLinkedList&lt;T&gt;</text>
+  <rect x="540" y="700" width="200" height="60" rx="10" fill="#e3f2fd" stroke="#2196F3" stroke-width="2"/>
+  <text x="640" y="730" font-family="Arial" font-size="15" font-weight="bold" text-anchor="middle" fill="#333">ds.CustomStack&lt;T&gt;</text>
+  <rect x="760" y="700" width="200" height="60" rx="10" fill="#e3f2fd" stroke="#2196F3" stroke-width="2"/>
+  <text x="860" y="730" font-family="Arial" font-size="15" font-weight="bold" text-anchor="middle" fill="#333">ds.CustomQueue&lt;T&gt;</text>
+  <rect x="980" y="700" width="200" height="60" rx="10" fill="#e3f2fd" stroke="#2196F3" stroke-width="2"/>
+  <text x="1080" y="730" font-family="Arial" font-size="15" font-weight="bold" text-anchor="middle" fill="#333">ds.CustomBST&lt;T&gt;</text>
+  <rect x="1200" y="700" width="200" height="60" rx="10" fill="#e3f2fd" stroke="#2196F3" stroke-width="2"/>
+  <text x="1300" y="730" font-family="Arial" font-size="15" font-weight="bold" text-anchor="middle" fill="#333">ds.CustomHashMap&lt;K,V&gt;</text>
+
+  <!-- Relationships (arrows) -->
+  <!-- ICMS uses AdminPanel, AuthSystem, LibrarySystem, CourseManagement, CustomArrayList<Book> -->
+  <line x1="360" y1="210" x2="450" y2="200" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="360" y1="210" x2="750" y2="180" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="360" y1="210" x2="1020" y2="180" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="360" y1="210" x2="1300" y2="180" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="360" y1="210" x2="100" y2="460" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="360" y1="210" x2="450" y2="450" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- AdminPanel uses CustomArrayList<Student>, CustomArrayList<Faculty> -->
+  <line x1="580" y1="280" x2="200" y2="700" stroke="#2196F3" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="580" y1="280" x2="420" y2="700" stroke="#2196F3" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- StudentPanel uses Student -->
+  <line x1="860" y1="240" x2="860" y2="400" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <!-- FacultyPanel uses Faculty -->
+  <line x1="1130" y1="240" x2="1130" y2="400" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- LibrarySystem uses CustomQueue, CustomBST, CustomArrayList -->
+  <line x1="1430" y1="300" x2="860" y2="700" stroke="#2196F3" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="1430" y1="300" x2="1080" y2="700" stroke="#2196F3" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="1430" y1="300" x2="200" y2="700" stroke="#2196F3" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- CourseManagement uses CustomArrayList<Course> -->
+  <line x1="230" y1="520" x2="200" y2="700" stroke="#2196F3" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- AuthSystem uses CustomHashMap -->
+  <line x1="560" y1="500" x2="1300" y2="700" stroke="#2196F3" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Student uses CustomArrayList, CustomHashMap -->
+  <line x1="860" y1="580" x2="200" y2="700" stroke="#2196F3" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="860" y1="580" x2="1300" y2="700" stroke="#2196F3" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Faculty uses CustomArrayList, CustomHashMap -->
+  <line x1="1130" y1="520" x2="200" y2="700" stroke="#2196F3" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="1130" y1="520" x2="1300" y2="700" stroke="#2196F3" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Book, Course are simple models -->
+
+  <!-- Arrowhead Definition -->
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <!-- Annotations -->
+  <text x="900" y="1050" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">
+    Note: Only main classes, models, and data structures are shown. Arrows indicate usage/composition.
+  </text>
+</svg> 

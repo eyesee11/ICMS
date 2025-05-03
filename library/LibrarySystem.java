@@ -5,11 +5,12 @@ import model.Student;
 import ds.CustomQueue;
 import ds.CustomBST;
 import ds.CustomArrayList;
+import util.TableFormatter;
 
 public class LibrarySystem {
     private CustomQueue<String> issueQueue;
     private CustomBST<Book> booksBST;
-    private CustomArrayList<String> issuedBooks; // Format: "studentId:bookId"
+    private CustomArrayList<String> issuedBooks;
 
     public LibrarySystem() {
         issueQueue = new CustomQueue<>();
@@ -63,18 +64,25 @@ public class LibrarySystem {
         System.out.println("\nAvailable Books:");
         int count = 0;
         
+        TableFormatter table = new TableFormatter("No.", "ID", "Title", "Author");
+        
         for (int i = 0; i < allBooks.size(); i++) {
             Book book = allBooks.get(i);
             if (!book.isIssued()) {
-                System.out.println("\nBook #" + (++count) + ":");
-                System.out.println("ID: " + book.getId());
-                System.out.println("Title: " + book.getTitle());
-                System.out.println("Author: " + book.getAuthor());
+                count++;
+                table.addRow(
+                    String.valueOf(count),
+                    book.getId(),
+                    book.getTitle(),
+                    book.getAuthor()
+                );
             }
         }
         
         if (count == 0) {
             System.out.println("No books available at the moment.");
+        } else {
+            System.out.println(table.toString());
         }
     }
     
@@ -82,28 +90,37 @@ public class LibrarySystem {
         System.out.println("\nIssued Books:");
         int count = 0;
         
+        TableFormatter table = new TableFormatter("No.", "ID", "Title", "Author", "Issued To");
+        
         for (int i = 0; i < allBooks.size(); i++) {
             Book book = allBooks.get(i);
             if (book.isIssued()) {
-                System.out.println("\nBook #" + (++count) + ":");
-                System.out.println("ID: " + book.getId());
-                System.out.println("Title: " + book.getTitle());
-                System.out.println("Author: " + book.getAuthor());
+                count++;
                 
                 // Find the student who has this book
+                String studentId = "Unknown";
                 for (int j = 0; j < issuedBooks.size(); j++) {
                     String record = issuedBooks.get(j);
                     if (record.endsWith(":" + book.getId())) {
-                        String studentId = record.substring(0, record.indexOf(":"));
-                        System.out.println("Issued to Student ID: " + studentId);
+                        studentId = record.substring(0, record.indexOf(":"));
                         break;
                     }
                 }
+                
+                table.addRow(
+                    String.valueOf(count),
+                    book.getId(),
+                    book.getTitle(),
+                    book.getAuthor(),
+                    "Student ID: " + studentId
+                );
             }
         }
         
         if (count == 0) {
             System.out.println("No books are currently issued.");
+        } else {
+            System.out.println(table.toString());
         }
     }
     
@@ -178,9 +195,11 @@ public class LibrarySystem {
         CustomQueue<String> tempQueue = new CustomQueue<>();
         int count = 1;
         
+        TableFormatter table = new TableFormatter("No.", "Issue Record");
+        
         while (!issueQueue.isEmpty()) {
             String record = issueQueue.dequeue();
-            System.out.println(count++ + ". " + record);
+            table.addRow(String.valueOf(count++), record);
             tempQueue.enqueue(record);
         }
         
@@ -188,5 +207,7 @@ public class LibrarySystem {
         while (!tempQueue.isEmpty()) {
             issueQueue.enqueue(tempQueue.dequeue());
         }
+        
+        System.out.println(table.toString());
     }
 }

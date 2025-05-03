@@ -48,7 +48,7 @@ public class Faculty {
     public void addSubject(String subject) {
         subjects.add(subject);
     }
-    
+
     public ds.CustomArrayList<String> getAssignedClasses() {
         return assignedClasses;
     }

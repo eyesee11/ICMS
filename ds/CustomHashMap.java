@@ -80,6 +80,21 @@ public class CustomHashMap<K, V> {
     public int size() {
         return size;
     }
+    /**
+     * Returns all the keys in this map as a CustomArrayList
+     * @return CustomArrayList containing all keys
+     */
+    public CustomArrayList<K> keySet() {
+        CustomArrayList<K> keys = new CustomArrayList<>();
+        for (int i = 0; i < buckets.size(); i++) {
+            Entry entry = buckets.get(i);
+            while (entry != null) {
+                keys.add(entry.key);
+                entry = entry.next;
+            }
+        }
+        return keys;
+    }
 
     private int getIndex(K key) {
         return Math.abs(key.hashCode() % INITIAL_CAPACITY);
