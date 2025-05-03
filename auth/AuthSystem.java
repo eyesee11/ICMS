@@ -13,8 +13,10 @@ public class AuthSystem {
     private CustomHashMap<String, String> credentials;
     private CustomHashMap<String, String> roles;
     private CustomArrayList<String> allUserIds;
-    private static final String CREDENTIALS_FILE = "credentials.dat";
-    private static final String ROLES_FILE = "roles.dat";
+    private static final String CREDENTIALS_FILE = "credentials.csv";
+    private static final String ROLES_FILE = "roles.csv";
+    
+    private String currentUsername; 
 
     private static final int MIN_PASSWORD_LENGTH = 6;
     private static final boolean REQUIRE_UPPERCASE = true;
@@ -44,12 +46,14 @@ public class AuthSystem {
         String storedHash = credentials.get(username);
         if (storedHash != null && verifyPassword(password, storedHash)) {
             String role = roles.get(username);
-            if (role.equals("STUDENT") || role.equals("FACULTY")) {
-                return "LIBRARY";
-            }
-            return role;
+            currentUsername = username;
+            return role; 
         }
         return null;
+    }
+    
+    public String getCurrentUsername() {
+        return currentUsername;
     }
 
     public void createStudentCredentials(Student student) {
@@ -206,47 +210,41 @@ public class AuthSystem {
     private void saveCredentials() {
         try {
             CustomArrayList<String> credentialLines = new CustomArrayList<>();
+            credentialLines.add("username,password,role");
             for (int i = 0; i < allUserIds.size(); i++) {
                 String id = allUserIds.get(i);
                 String password = credentials.get(id);
-                credentialLines.add(id + ":" + password);
+                String role = roles.get(id);
+                credentialLines.add(id + "," + password + "," + role);
             }
             FileHandler.saveToFile(CREDENTIALS_FILE, credentialLines);
-
-            CustomArrayList<String> roleLines = new CustomArrayList<>();
-            for (int i = 0; i < allUserIds.size(); i++) {
-                String id = allUserIds.get(i);
-                String role = roles.get(id);
-                roleLines.add(id + ":" + role);
-            }
-            FileHandler.saveToFile(ROLES_FILE, roleLines);
         } catch (Exception e) {
             System.err.println("Error saving credentials: " + e.getMessage());
         }
     }
 
+    /**
+     * Load credentials from CSV file
+     */
     private void loadCredentials() {
         try {
             CustomArrayList<String> credentialLines = FileHandler.readFromFile(CREDENTIALS_FILE);
-            for (int i = 0; i < credentialLines.size(); i++) {
-                String line = credentialLines.get(i);
-                int separatorIndex = line.indexOf(':');
-                if (separatorIndex > 0 && separatorIndex < line.length() - 1) {
-                    String id = line.substring(0, separatorIndex);
-                    String password = line.substring(separatorIndex + 1);
-                    credentials.put(id, password);
-                    allUserIds.add(id);
-                }
+            // Skip header row if it exists
+            int startIndex = 0;
+            if (credentialLines.size() > 0 && credentialLines.get(0).startsWith("username,password")) {
+                startIndex = 1;
             }
-
-            CustomArrayList<String> roleLines = FileHandler.readFromFile(ROLES_FILE);
-            for (int i = 0; i < roleLines.size(); i++) {
-                String line = roleLines.get(i);
-                int separatorIndex = line.indexOf(':');
-                if (separatorIndex > 0 && separatorIndex < line.length() - 1) {
-                    String id = line.substring(0, separatorIndex);
-                    String role = line.substring(separatorIndex + 1);
+            
+            for (int i = startIndex; i < credentialLines.size(); i++) {
+                String line = credentialLines.get(i);
+                String[] parts = line.split(",");
+                if (parts.length >= 3) {
+                    String id = parts[0];
+                    String password = parts[1];
+                    String role = parts[2];
+                    credentials.put(id, password);
                     roles.put(id, role);
+                    allUserIds.add(id);
                 }
             }
         } catch (Exception e) {

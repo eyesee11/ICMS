@@ -6,52 +6,44 @@ import java.util.Scanner;
 
 public class ConsoleUtil {
     private static final Scanner scanner = new Scanner(System.in);
-    
-    // Method to read a password with masking
+
     public static String readPassword(String prompt) {
         Console console = System.console();
-        
-        // If console is available (not in IDE), use its readPassword
+
         if (console != null) {
             System.out.print(prompt);
             char[] passwordChars = console.readPassword();
             return new String(passwordChars);
         } else {
-            // Fallback for IDE environment - simulate password masking
+
             System.out.print(prompt);
             StringBuilder password = new StringBuilder();
-            
-            // Try to enable raw mode for character input
+
             try {
                 while (true) {
                     char c = (char) System.in.read();
-                    
-                    // Enter key - finish input
+
                     if (c == '\r' || c == '\n') {
                         System.out.println();
                         break;
                     }
-                    
-                    // Backspace - remove last character
+
                     if (c == '\b' && password.length() > 0) {
                         password.deleteCharAt(password.length() - 1);
-                        System.out.print("\b \b"); // Remove asterisk
+                        System.out.print("\b \b");
                     } else if (c != '\b') {
-                        // Regular character - add to password and print asterisk
                         password.append(c);
                         System.out.print("*");
                     }
                 }
             } catch (IOException e) {
-                // If raw mode fails, fall back to regular input
                 return scanner.nextLine();
             }
             
             return password.toString();
         }
     }
-    
-    // Method to clear the console screen
+
     public static void clearScreen() {
         try {
             if (System.getProperty("os.name").contains("Windows")) {
@@ -61,20 +53,16 @@ public class ConsoleUtil {
                 System.out.flush();
             }
         } catch (Exception e) {
-            // If clearing screen fails, just print new lines as fallback
             for (int i = 0; i < 50; i++) {
                 System.out.println();
             }
         }
     }
-    
-    // Method to prompt user to press Enter to continue
+
     public static void pressEnterToContinue() {
         System.out.print("\nPress Enter to continue...");
         scanner.nextLine();
     }
-    
-    // Method to read input with custom prompt and validation
     public static String readInput(String prompt, boolean required) {
         while (true) {
             System.out.print(prompt);
@@ -98,7 +86,6 @@ public class ConsoleUtil {
             email = scanner.nextLine().trim();
             
             if (email.isEmpty()) {
-                // Allow empty for update operations (user wants to keep current)
                 isValid = true;
             } else if (!ValidationUtil.isValidEmail(email)) {
                 String fixedEmail = ValidationUtil.fixEmailDomain(email);
@@ -118,7 +105,6 @@ public class ConsoleUtil {
         return email;
     }
     
-    // Method to display a menu of options and get selection
     public static int showMenu(String title, String[] options) {
         while (true) {
             System.out.println("\n=========================");
@@ -142,7 +128,6 @@ public class ConsoleUtil {
         }
     }
     
-    // Method to select from a list of valid streams
     public static String selectStream() {
         String[] validStreams = ValidationUtil.getValidStreams();
         
@@ -156,8 +141,7 @@ public class ConsoleUtil {
             System.out.print("\nSelect stream (1-" + validStreams.length + ") or enter 0 to input custom: ");
             try {
                 String input = scanner.nextLine().trim();
-                
-                // Allow empty input for update operations
+
                 if (input.isEmpty()) {
                     return "";
                 }
