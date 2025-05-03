@@ -29,35 +29,35 @@ public class ICMS {
     public static void main(String[] args) {
         adminPanel.setCourseManagement(courseManagement);
         CourseData.loadSampleCourses(courseManagement);
-        
+
         boolean exit = false;
         while (!exit) {
             ConsoleUtil.clearScreen();
             displayMainMenu();
             int choice = getIntInput("Choose an option: ");
-            
+
             if (choice == 6) {
                 System.out.println("Exiting...");
                 exit = true;
                 continue;
             }
-            
+
             ConsoleUtil.clearScreen();
             System.out.println("=== LOGIN REQUIRED ===");
             System.out.print("Enter username: ");
             String username = scanner.nextLine();
-            
+
             String password = ConsoleUtil.readPassword("Enter password: ");
-            
+
             String role = auth.login(username, password);
             if (role == null) {
                 System.out.println("Invalid credentials!");
                 ConsoleUtil.pressEnterToContinue();
                 continue;
             }
-            
+
             switch (choice) {
-                case 1: 
+                case 1:
                     if (role.equals("ADMIN")) {
                         handleAdminPanel();
                     } else {
@@ -65,7 +65,7 @@ public class ICMS {
                         ConsoleUtil.pressEnterToContinue();
                     }
                     break;
-                case 2: 
+                case 2:
                     if (role.equals("STUDENT")) {
                         Student student = adminPanel.searchStudent(username);
                         if (student != null) {
@@ -79,7 +79,7 @@ public class ICMS {
                         ConsoleUtil.pressEnterToContinue();
                     }
                     break;
-                case 3: 
+                case 3:
                     if (role.equals("FACULTY")) {
                         Faculty faculty = adminPanel.searchFaculty(username);
                         if (faculty != null) {
@@ -93,7 +93,7 @@ public class ICMS {
                         ConsoleUtil.pressEnterToContinue();
                     }
                     break;
-                case 4: 
+                case 4:
                     if (role.equals("LIBRARY")) {
                         handleLibraryPanel();
                     } else {
@@ -136,9 +136,9 @@ public class ICMS {
             System.out.println("2. Faculty Administration");
             System.out.println("3. Course Administration");
             System.out.println("4. Back to Main Menu");
-            
+
             int choice = getIntInput("Choose an option: ");
-            
+
             switch (choice) {
                 case 1:
                     handleStudentAdmin();
@@ -158,7 +158,7 @@ public class ICMS {
             }
         }
     }
-    
+
     private static void handleStudentAdmin() {
         boolean back = false;
         while (!back) {
@@ -172,21 +172,21 @@ public class ICMS {
             System.out.println("4. View All Students");
             System.out.println("5. Assign Course to Student");
             System.out.println("6. Back");
-            
+
             int choice = getIntInput("Choose an option: ");
-            
+
             switch (choice) {
                 case 1:
                     String id = adminPanel.generateNextStudentId();
                     System.out.println("Auto-generated student ID: " + id);
-                    
+
                     System.out.print("Enter student name: ");
                     String name = scanner.nextLine();
-                    
+
                     String email = ConsoleUtil.readEmail("Enter student email: ");
-                    
+
                     String stream = ConsoleUtil.selectStream();
-                    
+
                     adminPanel.addStudent(new Student(id, name, email, stream));
                     ConsoleUtil.pressEnterToContinue();
                     break;
@@ -201,7 +201,7 @@ public class ICMS {
                         if (ValidationUtil.isNullOrEmpty(newName)) {
                             newName = student.getName();
                         }
-                        
+
                         System.out.print("Enter new email (current: " + student.getEmail() + "): ");
                         String newEmail = scanner.nextLine();
                         if (!ValidationUtil.isNullOrEmpty(newEmail)) {
@@ -212,11 +212,11 @@ public class ICMS {
                         } else {
                             newEmail = student.getEmail();
                         }
-                        
+
                         System.out.println("Current stream: " + student.getStream());
                         System.out.println("Enter new stream or leave blank to keep current: ");
                         String newStream = ConsoleUtil.selectStream();
-                        
+
                         adminPanel.updateStudent(updateId, newName, newEmail, newStream);
                     } else {
                         System.out.println("Student not found with ID: " + updateId);
@@ -227,7 +227,7 @@ public class ICMS {
                     adminPanel.viewAllStudents();
                     System.out.print("\nEnter student ID to delete: ");
                     String deleteId = scanner.nextLine();
-                    
+
                     Student studentToDelete = adminPanel.searchStudent(deleteId);
                     if (studentToDelete != null) {
                         System.out.print("Are you sure you want to delete " + studentToDelete.getName() + " (y/n)? ");
@@ -253,13 +253,13 @@ public class ICMS {
                     Student studentToAssign = adminPanel.searchStudent(studentId);
                     if (studentToAssign != null) {
                         courseManagement.viewCourses();
-                        System.out.print("\nEnter course name to assign: ");
-                        String courseName = scanner.nextLine();
-                        Course course = courseManagement.searchCourse(courseName);
+                        System.out.print("\nEnter course ID to assign: ");
+                        String courseId = scanner.nextLine();
+                        Course course = courseManagement.searchCourseById(courseId);
                         if (course != null) {
-                            adminPanel.assignCourseToStudent(studentId, courseName);
+                            adminPanel.assignCourseToStudent(studentId, courseId);
                         } else {
-                            System.out.println("Course not found: " + courseName);
+                            System.out.println("Course not found: " + courseId);
                         }
                     } else {
                         System.out.println("Student not found with ID: " + studentId);
@@ -275,7 +275,7 @@ public class ICMS {
             }
         }
     }
-    
+
     private static void handleFacultyAdmin() {
         boolean back = false;
         while (!back) {
@@ -290,19 +290,19 @@ public class ICMS {
             System.out.println("5. Assign Subject to Faculty");
             System.out.println("6. Assign Class to Faculty");
             System.out.println("7. Back");
-            
+
             int choice = getIntInput("Choose an option: ");
-            
+
             switch (choice) {
                 case 1:
                     String id = adminPanel.generateNextFacultyId();
                     System.out.println("Auto-generated faculty ID: " + id);
-                    
+
                     System.out.print("Enter faculty name: ");
                     String name = scanner.nextLine();
-                    
+
                     String email = ConsoleUtil.readEmail("Enter faculty email: ");
-                    
+
                     adminPanel.addFaculty(new Faculty(id, name, email));
                     ConsoleUtil.pressEnterToContinue();
                     break;
@@ -317,7 +317,7 @@ public class ICMS {
                         if (ValidationUtil.isNullOrEmpty(newName)) {
                             newName = faculty.getName();
                         }
-                        
+
                         System.out.print("Enter new email (current: " + faculty.getEmail() + "): ");
                         String newEmail = scanner.nextLine();
                         if (!ValidationUtil.isNullOrEmpty(newEmail)) {
@@ -328,7 +328,7 @@ public class ICMS {
                         } else {
                             newEmail = faculty.getEmail();
                         }
-                        
+
                         adminPanel.updateFaculty(updateId, newName, newEmail);
                     } else {
                         System.out.println("Faculty not found with ID: " + updateId);
@@ -339,7 +339,7 @@ public class ICMS {
                     adminPanel.viewAllFaculty();
                     System.out.print("\nEnter faculty ID to delete: ");
                     String deleteId = scanner.nextLine();
-                    
+
                     Faculty facultyToDelete = adminPanel.searchFaculty(deleteId);
                     if (facultyToDelete != null) {
                         System.out.print("Are you sure you want to delete " + facultyToDelete.getName() + " (y/n)? ");
@@ -399,7 +399,7 @@ public class ICMS {
     private static void handleStudentPanel(Student student) {
         StudentPanel studentPanel = new StudentPanel(student);
         boolean back = false;
-        
+
         while (!back) {
             ConsoleUtil.clearScreen();
             System.out.println("=========================");
@@ -413,9 +413,9 @@ public class ICMS {
             System.out.println("6. View Issued Books");
             System.out.println("7. Change Password");
             System.out.println("8. Back to Main Menu");
-            
+
             int choice = getIntInput("Choose an option: ");
-            
+
             switch (choice) {
                 case 1:
                     studentPanel.viewProfile();
@@ -427,12 +427,12 @@ public class ICMS {
                     if (ValidationUtil.isNullOrEmpty(name)) {
                         name = student.getName();
                     }
-                    
+
                     String email = ConsoleUtil.readEmail("Enter new email (current: " + student.getEmail() + "): ");
                     if (ValidationUtil.isNullOrEmpty(email)) {
                         email = student.getEmail();
                     }
-                    
+
                     studentPanel.updateProfile(name, email);
                     ConsoleUtil.pressEnterToContinue();
                     break;
@@ -454,9 +454,18 @@ public class ICMS {
                     break;
                 case 7:
                     String oldPassword = ConsoleUtil.readPassword("Enter current password: ");
+
+                    // Display password requirements
+                    System.out.println("\nPassword Requirements:");
+                    System.out.println("- Minimum 6 characters long");
+                    System.out.println("- Must contain at least one uppercase letter");
+                    System.out.println("- Must contain at least one number");
+                    System.out.println("- Must contain at least one special character");
+                    System.out.println();
+
                     String newPassword = ConsoleUtil.readPassword("Enter new password: ");
                     String confirmPassword = ConsoleUtil.readPassword("Confirm new password: ");
-                    
+
                     if (!newPassword.equals(confirmPassword)) {
                         System.out.println("Error: New passwords don't match.");
                     } else if (auth.changePassword(student.getId(), oldPassword, newPassword)) {
@@ -479,7 +488,7 @@ public class ICMS {
     private static void handleFacultyPanel(Faculty faculty) {
         FacultyPanel facultyPanel = new FacultyPanel(faculty);
         boolean back = false;
-        
+
         while (!back) {
             ConsoleUtil.clearScreen();
             System.out.println("=========================");
@@ -495,9 +504,9 @@ public class ICMS {
             System.out.println("8. View Issued Books");
             System.out.println("9. Change Password");
             System.out.println("10. Back to Main Menu");
-            
+
             int choice = getIntInput("Choose an option: ");
-            
+
             switch (choice) {
                 case 1:
                     facultyPanel.viewProfile();
@@ -509,12 +518,12 @@ public class ICMS {
                     if (ValidationUtil.isNullOrEmpty(name)) {
                         name = faculty.getName();
                     }
-                    
+
                     String email = ConsoleUtil.readEmail("Enter new email (current: " + faculty.getEmail() + "): ");
                     if (ValidationUtil.isNullOrEmpty(email)) {
                         email = faculty.getEmail();
                     }
-                    
+
                     facultyPanel.updateProfile(name, email);
                     ConsoleUtil.pressEnterToContinue();
                     break;
@@ -557,9 +566,18 @@ public class ICMS {
                     break;
                 case 9:
                     String oldPassword = ConsoleUtil.readPassword("Enter current password: ");
+
+                    // Display password requirements
+                    System.out.println("\nPassword Requirements:");
+                    System.out.println("- Minimum 6 characters long");
+                    System.out.println("- Must contain at least one uppercase letter");
+                    System.out.println("- Must contain at least one number");
+                    System.out.println("- Must contain at least one special character");
+                    System.out.println();
+
                     String newPassword = ConsoleUtil.readPassword("Enter new password: ");
                     String confirmPassword = ConsoleUtil.readPassword("Confirm new password: ");
-                    
+
                     if (!newPassword.equals(confirmPassword)) {
                         System.out.println("Error: New passwords don't match.");
                     } else if (auth.changePassword(faculty.getId(), oldPassword, newPassword)) {
@@ -581,7 +599,7 @@ public class ICMS {
 
     private static void handleLibraryPanel() {
         boolean back = false;
-        
+
         while (!back) {
             ConsoleUtil.clearScreen();
             System.out.println("=========================");
@@ -595,9 +613,9 @@ public class ICMS {
             System.out.println("6. Search Book by Title");
             System.out.println("7. Display Issue Queue");
             System.out.println("8. Back to Main Menu");
-            
+
             int choice = getIntInput("Choose an option: ");
-            
+
             switch (choice) {
                 case 1:
                     System.out.print("Enter book ID: ");
@@ -613,10 +631,10 @@ public class ICMS {
                     break;
                 case 2:
                     library.viewAvailableBooks(allBooks);
-                    
+
                     System.out.println("\nAvailable Students:");
                     adminPanel.viewAllStudents();
-                    
+
                     System.out.print("\nEnter student ID: ");
                     String studentId = scanner.nextLine();
                     Student student = adminPanel.searchStudent(studentId);
@@ -638,7 +656,7 @@ public class ICMS {
                     break;
                 case 3:
                     library.viewIssuedBooks(allBooks);
-                    
+
                     System.out.print("\nEnter student ID: ");
                     String studId = scanner.nextLine();
                     Student stud = adminPanel.searchStudent(studId);
@@ -661,7 +679,7 @@ public class ICMS {
                                 }
                             }
                             System.out.println(booksTable.toString());
-                            
+
                             System.out.print("\nEnter book title to return: ");
                             String bookTitle = scanner.nextLine();
                             Book book = library.linearSearchByTitle(allBooks, bookTitle);
@@ -702,7 +720,7 @@ public class ICMS {
                     } else {
                         System.out.println("Book not found: " + searchTitle);
                     }
-                    
+
                     if (allBooks.size() > 1) {
                         System.out.println("\nUsing Binary Search:");
                         Book binarySearchBook = library.binarySearchByTitle(allBooks, searchTitle);
@@ -736,7 +754,7 @@ public class ICMS {
 
     private static void handleCoursePanel() {
         boolean back = false;
-        
+
         while (!back) {
             ConsoleUtil.clearScreen();
             System.out.println("=========================");
@@ -750,9 +768,9 @@ public class ICMS {
             System.out.println("6. Sort Courses by Duration");
             System.out.println("7. Search Courses by Fees Range");
             System.out.println("8. Back to Main Menu");
-            
+
             int choice = getIntInput("Choose an option: ");
-            
+
             switch (choice) {
                 case 1:
                     courseManagement.viewCourses();
@@ -795,8 +813,10 @@ public class ICMS {
                     double minFees = getDoubleInput("");
                     System.out.print("Enter maximum fees: ₹");
                     double maxFees = getDoubleInput("");
-                    CustomArrayList<Course> feesFilteredCourses = courseManagement.searchCoursesByFeesRange(minFees, maxFees);
-                    courseManagement.displayCourseSearchResults(feesFilteredCourses, "Courses in fee range ₹" + minFees + " - ₹" + maxFees);
+                    CustomArrayList<Course> feesFilteredCourses = courseManagement.searchCoursesByFeesRange(minFees,
+                            maxFees);
+                    courseManagement.displayCourseSearchResults(feesFilteredCourses,
+                            "Courses in fee range ₹" + minFees + " - ₹" + maxFees);
                     ConsoleUtil.pressEnterToContinue();
                     break;
                 case 8:
@@ -820,7 +840,7 @@ public class ICMS {
             }
         }
     }
-    
+
     private static double getDoubleInput(String prompt) {
         System.out.print(prompt);
         while (true) {

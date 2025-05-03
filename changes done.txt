@@ -1,0 +1,36 @@
+Changes Made to ICMS (Integrated College Management System)
+
+1. Data Storage Format Changes:
+   - Converted all .dat files to CSV format with proper headers
+   - Created the following CSV files:
+     * roles.csv (from roles.dat)
+     * credentials.csv (from credentials.dat)
+     * students.csv (from students.dat)
+     * faculty.csv (from faculty.dat)
+   - Deleted old .dat files after successful conversion
+
+2. Password Change UI Improvements:
+   - Added password requirement display before password change in student panel
+   - Added password requirement display before password change in faculty panel
+   - Requirements shown:
+     * Minimum 6 characters long
+     * Must contain at least one uppercase letter
+     * Must contain at least one number
+     * Must contain at least one special character
+
+3. File Format Changes:
+   - The system now uses CSV format for all data storage
+   - CSV files include proper headers for better data organization
+   - Data structure remains the same but in a more standard, readable format
+
+4. Code Changes:
+   - Modified main/ICMS.java to display password requirements
+   - Added password requirement display in both student and faculty password change sections
+   - No changes were needed to FileHandler.java as it was already designed to work with CSV files
+
+5. Security Improvements in ICMS.java:
+   - Enhanced role verification using auth.getUserRole() instead of direct role comparison
+   - Changed course assignment to use course names instead of course IDs for better usability
+   - Added more robust role checking in student and faculty access control
+
+Note: The system was already set up to handle CSV files through the FileHandler class, making the transition from .dat to CSV format seamless without requiring major code changes. 
