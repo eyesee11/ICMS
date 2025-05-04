@@ -11,6 +11,7 @@ import model.Faculty;
 import model.Book;
 import model.Course;
 import data.CourseData;
+import data.BookData;
 import ds.CustomArrayList;
 import util.TableFormatter;
 import util.ConsoleUtil;
@@ -29,6 +30,20 @@ public class ICMS {
     public static void main(String[] args) {
         adminPanel.setCourseManagement(courseManagement);
         CourseData.loadSampleCourses(courseManagement);
+    
+        CustomArrayList<Book> booksFromCSV = FileHandler.loadBooks();
+        if (booksFromCSV.size() > 0) {
+            for (int i = 0; i < booksFromCSV.size(); i++) {
+                allBooks.add(booksFromCSV.get(i));
+                library.addBook(booksFromCSV.get(i));
+            }
+            System.out.println("Loaded " + booksFromCSV.size() + " books from CSV file.");
+        } else {
+            BookData.loadSampleBooks(allBooks);
+            for (int i = 0; i < allBooks.size(); i++) {
+                library.addBook(allBooks.get(i));
+            }
+        }
 
         boolean exit = false;
         while (!exit) {
@@ -94,7 +109,7 @@ public class ICMS {
                     }
                     break;
                 case 4:
-                    if (role.equals("LIBRARY")) {
+                    if (role.equals("LIBRARY") || role.equals("STUDENT") || role.equals("FACULTY")) {
                         handleLibraryPanel();
                     } else {
                         System.out.println("Access denied: Library privileges required!");
@@ -135,7 +150,8 @@ public class ICMS {
             System.out.println("1. Student Administration");
             System.out.println("2. Faculty Administration");
             System.out.println("3. Course Administration");
-            System.out.println("4. Back to Main Menu");
+            System.out.println("4. Library Management");
+            System.out.println("5. Back to Main Menu");
 
             int choice = getIntInput("Choose an option: ");
 
@@ -150,6 +166,9 @@ public class ICMS {
                     adminPanel.handleCourseManagement(scanner);
                     break;
                 case 4:
+                    handleAdminLibraryManagement();
+                    break;
+                case 5:
                     back = true;
                     break;
                 default:
@@ -599,20 +618,309 @@ public class ICMS {
 
     private static void handleLibraryPanel() {
         boolean back = false;
+        String currentUserRole = auth.getUserRole(auth.getCurrentUsername());
+        Student currentStudent = null;
+        Faculty currentFaculty = null;
+
+        if ("STUDENT".equals(currentUserRole)) {
+            currentStudent = adminPanel.searchStudent(auth.getCurrentUsername());
+        } else if ("FACULTY".equals(currentUserRole)) {
+            currentFaculty = adminPanel.searchFaculty(auth.getCurrentUsername());
+        }
 
         while (!back) {
             ConsoleUtil.clearScreen();
             System.out.println("=========================");
             System.out.println("Library System");
             System.out.println("=========================");
-            System.out.println("1. Add Book");
-            System.out.println("2. Issue Book");
-            System.out.println("3. Return Book");
-            System.out.println("4. View Available Books");
-            System.out.println("5. View Issued Books");
-            System.out.println("6. Search Book by Title");
-            System.out.println("7. Display Issue Queue");
-            System.out.println("8. Back to Main Menu");
+            
+            // Different menu based on user role
+            if ("LIBRARY".equals(currentUserRole)) {
+                System.out.println("1. Issue Book");
+                System.out.println("2. Return Book");
+                System.out.println("3. View Available Books");
+                System.out.println("4. View Issued Books");
+                System.out.println("5. Search Book by Title");
+                System.out.println("6. Display Issue Queue");
+                System.out.println("7. Back to Main Menu");
+            } else {
+                // Enhanced menu for students and faculty
+                System.out.println("1. View Available Books");
+                System.out.println("2. View My Issued Books");
+                System.out.println("3. Issue/Borrow a Book");  
+                System.out.println("4. Return Book");
+                System.out.println("5. Search Book by Title");
+                System.out.println("6. Back to Main Menu");
+            }
+
+            int choice = getIntInput("Choose an option: ");
+
+            if ("LIBRARY".equals(currentUserRole)) {
+                switch (choice) {
+                    case 1:
+                        library.viewAvailableBooks(allBooks);
+
+                        System.out.println("\nAvailable Students:");
+                        adminPanel.viewAllStudents();
+
+                        System.out.print("\nEnter student ID: ");
+                        String studentId = scanner.nextLine();
+                        Student student = adminPanel.searchStudent(studentId);
+                        if (student != null) {
+                            System.out.print("Enter book title to issue: ");
+                            String bookTitle = scanner.nextLine();
+                            Book book = library.linearSearchByTitle(allBooks, bookTitle);
+                            if (book != null && !book.isIssued()) {
+                                library.issueBook(student, book);
+                            } else if (book == null) {
+                                System.out.println("Book not found: " + bookTitle);
+                            } else {
+                                System.out.println("Book is already issued!");
+                            }
+                        } else {
+                            System.out.println("Student not found with ID: " + studentId);
+                        }
+                        ConsoleUtil.pressEnterToContinue();
+                        break;
+                    case 2:
+                        library.viewIssuedBooks(allBooks);
+
+                        System.out.print("\nEnter student ID: ");
+                        String studId = scanner.nextLine();
+                        Student stud = adminPanel.searchStudent(studId);
+                        if (stud != null) {
+                            System.out.println("\nBooks issued to " + stud.getName() + ":");
+                            CustomArrayList<String> issuedBooks = stud.getIssuedBooks();
+                            if (issuedBooks.size() == 0) {
+                                System.out.println("No books issued to this student.");
+                            } else {
+                                TableFormatter booksTable = new TableFormatter("No.", "Book Title", "Author");
+                                int count = 0;
+                                for (int i = 0; i < issuedBooks.size(); i++) {
+                                    String bookId = issuedBooks.get(i);
+                                    for (int j = 0; j < allBooks.size(); j++) {
+                                        Book b = allBooks.get(j);
+                                        if (b.getId().equals(bookId)) {
+                                            count++;
+                                            booksTable.addRow(String.valueOf(count), b.getTitle(), b.getAuthor());
+                                        }
+                                    }
+                                }
+                                System.out.println(booksTable.toString());
+
+                                System.out.print("\nEnter book title to return: ");
+                                String bookTitle = scanner.nextLine();
+                                Book book = library.linearSearchByTitle(allBooks, bookTitle);
+                                if (book != null && book.isIssued()) {
+                                    library.returnBook(stud, book);
+                                } else if (book == null) {
+                                    System.out.println("Book not found: " + bookTitle);
+                                } else {
+                                    System.out.println("Book is not issued!");
+                                }
+                            }
+                        } else {
+                            System.out.println("Student not found with ID: " + studId);
+                        }
+                        ConsoleUtil.pressEnterToContinue();
+                        break;
+                    case 3:
+                        library.viewAvailableBooks(allBooks);
+                        ConsoleUtil.pressEnterToContinue();
+                        break;
+                    case 4:
+                        library.viewIssuedBooks(allBooks);
+                        ConsoleUtil.pressEnterToContinue();
+                        break;
+                    case 5:
+                        searchBookByTitle();
+                        ConsoleUtil.pressEnterToContinue();
+                        break;
+                    case 6:
+                        library.displayIssueQueue();
+                        ConsoleUtil.pressEnterToContinue();
+                        break;
+                    case 7:
+                        back = true;
+                        break;
+                    default:
+                        System.out.println("Invalid option!");
+                        ConsoleUtil.pressEnterToContinue();
+                }
+            } else {
+                // Enhanced student/faculty menu with book request functionality
+                switch (choice) {
+                    case 1:
+                        library.viewAvailableBooks(allBooks);
+                        ConsoleUtil.pressEnterToContinue();
+                        break;
+                    case 2:
+                        if (currentStudent != null) {
+                            library.viewUserIssuedBooks(allBooks, currentStudent);
+                        } else if (currentFaculty != null) {
+                            library.viewUserIssuedBooks(allBooks, currentFaculty);
+                        }
+                        ConsoleUtil.pressEnterToContinue();
+                        break;
+                    case 3:
+                        // New functionality: Request book issue for students and faculty
+                        library.viewAvailableBooks(allBooks);
+                        System.out.print("\nEnter book title to request: ");
+                        String bookTitle = scanner.nextLine();
+                        Book book = library.linearSearchByTitle(allBooks, bookTitle);
+                        
+                        if (book != null && !book.isIssued()) {
+                            if (currentStudent != null) {
+                                // Check if student already has 3 or more books
+                                if (currentStudent.getIssuedBooks().size() >= 3) {
+                                    System.out.println("You have reached the maximum limit of 3 books. Please return a book first.");
+                                } else {
+                                    System.out.println("Book '" + book.getTitle() + "' requested successfully.");
+                                    System.out.println("Please visit the library desk to get your book issued.");
+                                    library.issueBook(currentStudent, book);
+                                }
+                            } else if (currentFaculty != null) {
+                                // Faculty can issue up to 5 books
+                                if (currentFaculty.getIssuedBooks().size() >= 5) {
+                                    System.out.println("You have reached the maximum limit of 5 books. Please return a book first.");
+                                } else {
+                                    System.out.println("Book '" + book.getTitle() + "' requested successfully.");
+                                    System.out.println("Please visit the library desk to get your book issued.");
+                                    library.issueBook(currentFaculty, book);
+                                }
+                            }
+                        } else if (book == null) {
+                            System.out.println("Book not found: " + bookTitle);
+                        } else {
+                            System.out.println("This book is already issued.");
+                        }
+                        ConsoleUtil.pressEnterToContinue();
+                        break;
+                    case 4:
+                        // Return book functionality for students and faculty
+                        if (currentStudent != null) {
+                            library.viewUserIssuedBooks(allBooks, currentStudent);
+                            if (currentStudent.getIssuedBooks().size() > 0) {
+                                System.out.print("\nEnter book title to return: ");
+                                String returnBookTitle = scanner.nextLine();
+                                Book returnBook = library.linearSearchByTitle(allBooks, returnBookTitle);
+                                if (returnBook != null && returnBook.isIssued()) {
+                                    // Check if this student has issued this book
+                                    boolean hasIssuedBook = false;
+                                    CustomArrayList<String> issuedBooks = currentStudent.getIssuedBooks();
+                                    for (int i = 0; i < issuedBooks.size(); i++) {
+                                        if (issuedBooks.get(i).equals(returnBook.getId())) {
+                                            hasIssuedBook = true;
+                                            break;
+                                        }
+                                    }
+                                    
+                                    if (hasIssuedBook) {
+                                        library.returnBook(currentStudent, returnBook);
+                                    } else {
+                                        System.out.println("This book was not issued to you.");
+                                    }
+                                } else if (returnBook == null) {
+                                    System.out.println("Book not found: " + returnBookTitle);
+                                } else {
+                                    System.out.println("This book is not currently issued.");
+                                }
+                            }
+                        } else if (currentFaculty != null) {
+                            library.viewUserIssuedBooks(allBooks, currentFaculty);
+                            if (currentFaculty.getIssuedBooks().size() > 0) {
+                                System.out.print("\nEnter book title to return: ");
+                                String returnBookTitle = scanner.nextLine();
+                                Book returnBook = library.linearSearchByTitle(allBooks, returnBookTitle);
+                                if (returnBook != null && returnBook.isIssued()) {
+                                    // Check if this faculty has issued this book
+                                    boolean hasIssuedBook = false;
+                                    CustomArrayList<String> issuedBooks = currentFaculty.getIssuedBooks();
+                                    for (int i = 0; i < issuedBooks.size(); i++) {
+                                        if (issuedBooks.get(i).equals(returnBook.getId())) {
+                                            hasIssuedBook = true;
+                                            break;
+                                        }
+                                    }
+                                    
+                                    if (hasIssuedBook) {
+                                        library.returnBook(currentFaculty, returnBook);
+                                    } else {
+                                        System.out.println("This book was not issued to you.");
+                                    }
+                                } else if (returnBook == null) {
+                                    System.out.println("Book not found: " + returnBookTitle);
+                                } else {
+                                    System.out.println("This book is not currently issued.");
+                                }
+                            }
+                        }
+                        ConsoleUtil.pressEnterToContinue();
+                        break;
+                    case 5:
+                        searchBookByTitle();
+                        ConsoleUtil.pressEnterToContinue();
+                        break;
+                    case 6:
+                        back = true;
+                        break;
+                    default:
+                        System.out.println("Invalid option!");
+                        ConsoleUtil.pressEnterToContinue();
+                }
+            }
+        }
+    }
+
+    private static void searchBookByTitle() {
+        System.out.print("Enter book title to search: ");
+        String searchTitle = scanner.nextLine();
+        System.out.println("\nUsing Linear Search:");
+        Book foundBook = library.linearSearchByTitle(allBooks, searchTitle);
+        if (foundBook != null) {
+            System.out.println("Book found:");
+            TableFormatter bookTable = new TableFormatter("Field", "Value");
+            bookTable.addRow("ID", foundBook.getId());
+            bookTable.addRow("Title", foundBook.getTitle());
+            bookTable.addRow("Author", foundBook.getAuthor());
+            bookTable.addRow("Status", (foundBook.isIssued() ? "Issued" : "Available"));
+            System.out.println(bookTable.toString());
+        } else {
+            System.out.println("Book not found: " + searchTitle);
+        }
+
+        if (allBooks.size() > 1) {
+            System.out.println("\nUsing Binary Search:");
+            Book binarySearchBook = library.binarySearchByTitle(allBooks, searchTitle);
+            if (binarySearchBook != null) {
+                System.out.println("Book found:");
+                TableFormatter binaryBookTable = new TableFormatter("Field", "Value");
+                binaryBookTable.addRow("ID", binarySearchBook.getId());
+                binaryBookTable.addRow("Title", binarySearchBook.getTitle());
+                binaryBookTable.addRow("Author", binarySearchBook.getAuthor());
+                binaryBookTable.addRow("Status", (binarySearchBook.isIssued() ? "Issued" : "Available"));
+                System.out.println(binaryBookTable.toString());
+            } else {
+                System.out.println("Book not found using binary search: " + searchTitle);
+            }
+        }
+    }
+
+    private static void handleAdminLibraryManagement() {
+        boolean back = false;
+        while (!back) {
+            ConsoleUtil.clearScreen();
+            System.out.println("=========================");
+            System.out.println("Library Management (Admin)");
+            System.out.println("=========================");
+            System.out.println("1. Add New Book");
+            System.out.println("2. Update Book Details");
+            System.out.println("3. Remove Book");
+            System.out.println("4. View All Books");
+            System.out.println("5. View All Issued Books");
+            System.out.println("6. View Issue History");
+            System.out.println("7. Search Books");
+            System.out.println("8. Back");
 
             int choice = getIntInput("Choose an option: ");
 
@@ -627,119 +935,98 @@ public class ICMS {
                     Book newBook = new Book(id, title, author);
                     library.addBook(newBook);
                     allBooks.add(newBook);
+                    FileHandler.saveBooks(allBooks);
+                    System.out.println("Book added successfully: " + title + " by " + author);
                     ConsoleUtil.pressEnterToContinue();
                     break;
                 case 2:
-                    library.viewAvailableBooks(allBooks);
-
-                    System.out.println("\nAvailable Students:");
-                    adminPanel.viewAllStudents();
-
-                    System.out.print("\nEnter student ID: ");
-                    String studentId = scanner.nextLine();
-                    Student student = adminPanel.searchStudent(studentId);
-                    if (student != null) {
-                        System.out.print("Enter book title to issue: ");
-                        String bookTitle = scanner.nextLine();
-                        Book book = library.linearSearchByTitle(allBooks, bookTitle);
-                        if (book != null && !book.isIssued()) {
-                            library.issueBook(student, book);
-                        } else if (book == null) {
-                            System.out.println("Book not found: " + bookTitle);
-                        } else {
-                            System.out.println("Book is already issued!");
+                    library.viewAllBooks(allBooks);
+                    System.out.print("\nEnter book ID to update: ");
+                    String bookId = scanner.nextLine();
+                    Book bookToUpdate = null;
+                    
+                    for (int i = 0; i < allBooks.size(); i++) {
+                        Book b = allBooks.get(i);
+                        if (b.getId().equals(bookId)) {
+                            bookToUpdate = b;
+                            break;
                         }
+                    }
+                    
+                    if (bookToUpdate != null) {
+                        System.out.print("Enter new title (current: " + bookToUpdate.getTitle() + "): ");
+                        String newTitle = scanner.nextLine();
+                        if (!ValidationUtil.isNullOrEmpty(newTitle)) {
+                            bookToUpdate.setTitle(newTitle);
+                        }
+                        
+                        System.out.print("Enter new author (current: " + bookToUpdate.getAuthor() + "): ");
+                        String newAuthor = scanner.nextLine();
+                        if (!ValidationUtil.isNullOrEmpty(newAuthor)) {
+                            bookToUpdate.setAuthor(newAuthor);
+                        }
+                        
+                        // Save books to CSV after updating
+                        FileHandler.saveBooks(allBooks);
+                        System.out.println("Book updated successfully.");
                     } else {
-                        System.out.println("Student not found with ID: " + studentId);
+                        System.out.println("Book not found with ID: " + bookId);
                     }
                     ConsoleUtil.pressEnterToContinue();
                     break;
                 case 3:
-                    library.viewIssuedBooks(allBooks);
-
-                    System.out.print("\nEnter student ID: ");
-                    String studId = scanner.nextLine();
-                    Student stud = adminPanel.searchStudent(studId);
-                    if (stud != null) {
-                        System.out.println("\nBooks issued to " + stud.getName() + ":");
-                        CustomArrayList<String> issuedBooks = stud.getIssuedBooks();
-                        if (issuedBooks.size() == 0) {
-                            System.out.println("No books issued to this student.");
+                    library.viewAllBooks(allBooks);
+                    System.out.print("\nEnter book ID to remove: ");
+                    String removeId = scanner.nextLine();
+                    Book bookToRemove = null;
+                    int indexToRemove = -1;
+                    
+                    for (int i = 0; i < allBooks.size(); i++) {
+                        Book b = allBooks.get(i);
+                        if (b.getId().equals(removeId)) {
+                            bookToRemove = b;
+                            indexToRemove = i;
+                            break;
+                        }
+                    }
+                    
+                    if (bookToRemove != null) {
+                        if (bookToRemove.isIssued()) {
+                            System.out.println("Cannot remove book as it is currently issued.");
                         } else {
-                            TableFormatter booksTable = new TableFormatter("No.", "Book Title", "Author");
-                            int count = 0;
-                            for (int i = 0; i < issuedBooks.size(); i++) {
-                                String bookId = issuedBooks.get(i);
-                                for (int j = 0; j < allBooks.size(); j++) {
-                                    Book b = allBooks.get(j);
-                                    if (b.getId().equals(bookId)) {
-                                        count++;
-                                        booksTable.addRow(String.valueOf(count), b.getTitle(), b.getAuthor());
-                                    }
-                                }
-                            }
-                            System.out.println(booksTable.toString());
-
-                            System.out.print("\nEnter book title to return: ");
-                            String bookTitle = scanner.nextLine();
-                            Book book = library.linearSearchByTitle(allBooks, bookTitle);
-                            if (book != null && book.isIssued()) {
-                                library.returnBook(stud, book);
-                            } else if (book == null) {
-                                System.out.println("Book not found: " + bookTitle);
+                            System.out.print("Are you sure you want to remove '" + bookToRemove.getTitle() + "' (y/n)? ");
+                            String confirm = scanner.nextLine().trim().toLowerCase();
+                            if (confirm.equals("y") || confirm.equals("yes")) {
+                                allBooks.remove(indexToRemove);
+                                // Save books to CSV after removing
+                                FileHandler.saveBooks(allBooks);
+                                System.out.println("Book removed successfully.");
                             } else {
-                                System.out.println("Book is not issued!");
+                                System.out.println("Removal cancelled.");
                             }
                         }
                     } else {
-                        System.out.println("Student not found with ID: " + studId);
+                        System.out.println("Book not found with ID: " + removeId);
                     }
                     ConsoleUtil.pressEnterToContinue();
                     break;
                 case 4:
-                    library.viewAvailableBooks(allBooks);
+                    library.viewAllBooks(allBooks);
                     ConsoleUtil.pressEnterToContinue();
                     break;
                 case 5:
-                    library.viewIssuedBooks(allBooks);
+                    // View all issued books with detailed info on who has them
+                    library.viewDetailedIssuedBooks(allBooks, adminPanel);
                     ConsoleUtil.pressEnterToContinue();
                     break;
                 case 6:
-                    System.out.print("Enter book title to search: ");
-                    String searchTitle = scanner.nextLine();
-                    System.out.println("\nUsing Linear Search:");
-                    Book foundBook = library.linearSearchByTitle(allBooks, searchTitle);
-                    if (foundBook != null) {
-                        System.out.println("Book found:");
-                        TableFormatter bookTable = new TableFormatter("Field", "Value");
-                        bookTable.addRow("ID", foundBook.getId());
-                        bookTable.addRow("Title", foundBook.getTitle());
-                        bookTable.addRow("Author", foundBook.getAuthor());
-                        bookTable.addRow("Status", (foundBook.isIssued() ? "Issued" : "Available"));
-                        System.out.println(bookTable.toString());
-                    } else {
-                        System.out.println("Book not found: " + searchTitle);
-                    }
-
-                    if (allBooks.size() > 1) {
-                        System.out.println("\nUsing Binary Search:");
-                        Book binarySearchBook = library.binarySearchByTitle(allBooks, searchTitle);
-                        if (binarySearchBook != null) {
-                            System.out.println("Book found:");
-                            TableFormatter binaryBookTable = new TableFormatter("Field", "Value");
-                            binaryBookTable.addRow("ID", binarySearchBook.getId());
-                            binaryBookTable.addRow("Title", binarySearchBook.getTitle());
-                            binaryBookTable.addRow("Author", binarySearchBook.getAuthor());
-                            binaryBookTable.addRow("Status", (binarySearchBook.isIssued() ? "Issued" : "Available"));
-                            System.out.println(binaryBookTable.toString());
-                        } else {
-                            System.out.println("Book not found using binary search: " + searchTitle);
-                        }
-                    }
+                    library.displayIssueQueue();
                     ConsoleUtil.pressEnterToContinue();
                     break;
                 case 7:
-                    library.displayIssueQueue();
+                    System.out.print("Enter search term (title/author): ");
+                    String searchTerm = scanner.nextLine();
+                    library.searchBooks(allBooks, searchTerm);
                     ConsoleUtil.pressEnterToContinue();
                     break;
                 case 8:

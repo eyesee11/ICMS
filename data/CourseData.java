@@ -3,9 +3,6 @@ package data;
 import course.CourseManagement;
 import model.Course;
 
-/**
- * Utility class to store and load sample course data
- */
 public class CourseData {
     
     /**
@@ -13,7 +10,6 @@ public class CourseData {
      * @param courseManagement The CourseManagement instance to load data into
      */
     public static void loadSampleCourses(CourseManagement courseManagement) {
-        // Computer Science courses
         courseManagement.addCourse(new Course("C001", "Database Management Systems", 6, 12000.0, 
             "Databases, SQL, DBMS design, database administration", "Computer Science", 3, 
             "Dr. Robert Brown", 40));
@@ -34,7 +30,6 @@ public class CourseData {
             "HTML, CSS, JavaScript, frontend & backend technologies", "Computer Science", 2, 
             "Prof. Michael Lee", 60));
             
-        // Electronics courses
         courseManagement.addCourse(new Course("C006", "Digital Electronics", 5, 11000.0, 
             "Digital circuits, logic design, microprocessors", "Electronics", 2, 
             "Dr. Emily Davis", 40));
@@ -47,7 +42,6 @@ public class CourseData {
             "Electronic devices, circuit theory, analog design", "Electronics", 4, 
             "Dr. Sarah Johnson", 35));
             
-        // Civil Engineering courses
         courseManagement.addCourse(new Course("C009", "Structural Engineering", 6, 11000.0, 
             "Building design, structural analysis, construction", "Civil Engineering", 3, 
             "Dr. Robert Peterson", 40));
@@ -56,7 +50,6 @@ public class CourseData {
             "Water treatment, waste management, sustainability", "Civil Engineering", 4, 
             "Dr. Patricia Green", 45));
             
-        // Mechanical Engineering courses
         courseManagement.addCourse(new Course("C011", "Thermodynamics", 4, 9500.0, 
             "Heat transfer, energy conversion, power systems", "Mechanical Engineering", 3, 
             "Prof. Thomas Anderson", 50));

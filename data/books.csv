@@ -1,0 +1,17 @@
+id,title,author,isIssued
+B001,Introduction to Algorithm,Thomas H. Cormen,false
+B002,Clean Code,Robert C. Martin,false
+B003,Design Patterns,Erich Gamma,false
+B004,The Pragmatic Programmer,Andrew Hunt,false
+B005,Code Complete,Steve McConnell,false
+B006,Calculus: Early Transcendentals,James Stewart,false
+B007,Linear Algebra,Gilbert Strang,false
+B008,Discrete Mathematics,Richard Johnsonbaugh,false
+B009,Concepts of Physics Vol. 1,H.C. Verma,false
+B010,University Physics,Hugh D. Young,false
+B011,To Kill a Mockingbird,Harper Lee,false
+B012,Pride and Prejudice,Jane Austen,false
+B013,The Great Gatsby,F. Scott Fitzgerald,false
+B014,Sapiens: A Brief History of Humankind,Yuval Noah Harari,false
+B015,A People's History,Howard Zinn,false
+123,dsa,gopal,false

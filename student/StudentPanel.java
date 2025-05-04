@@ -1,6 +1,8 @@
 package student;
 
 import model.Student;
+import model.Book;
+import ds.CustomArrayList;
 import util.TableFormatter;
 
 public class StudentPanel {
@@ -49,8 +51,6 @@ public class StudentPanel {
             return;
         }
         
-        // Display attendance (Note: In a real implementation, we would iterate through the HashMap)
-        // This is a simplified version since we can't iterate through our custom HashMap easily
         System.out.println("Attendance records are available in the system.");
     }
     
@@ -78,6 +78,38 @@ public class StudentPanel {
         for (int i = 0; i < books.size(); i++) {
             table.addRow(String.valueOf(i + 1), books.get(i));
         }
+        System.out.println(table.toString());
+    }
+
+    public void viewIssuedBooks(CustomArrayList<Book> allBooks) {
+        System.out.println("\nIssued Books:");
+        ds.CustomArrayList<String> bookIds = student.getIssuedBooks();
+        if (bookIds.size() == 0) {
+            System.out.println("No books issued currently.");
+            return;
+        }
+        
+        TableFormatter table = new TableFormatter("No.", "Book ID", "Title", "Author", "Status");
+        int count = 0;
+        
+        for (int i = 0; i < bookIds.size(); i++) {
+            String bookId = bookIds.get(i);
+            for (int j = 0; j < allBooks.size(); j++) {
+                Book book = allBooks.get(j);
+                if (book.getId().equals(bookId)) {
+                    count++;
+                    table.addRow(
+                        String.valueOf(count),
+                        book.getId(),
+                        book.getTitle(),
+                        book.getAuthor(),
+                        book.isIssued() ? "Issued" : "Available"
+                    );
+                    break;
+                }
+            }
+        }
+        
         System.out.println(table.toString());
     }
 }
