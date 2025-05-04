@@ -19,24 +19,35 @@ All data management in ICMS relies on custom implementations of standard data st
 - Uses the CustomHashMap for credential storage and verification
 - Implements role-based access control for Admin, Student, Faculty, and Library roles
 - Secure login flow with username/password validation
+- Password requirements enforced:
+  - Minimum 6 characters long
+  - Must contain at least one uppercase letter
+  - Must contain at least one number
+  - Must contain at least one special character
 
 ### Admin Functionality
 - Student and Faculty CRUD operations using CustomArrayList for data storage
+- Automated email generation for students (format: name[admissionyear].id@student.college.edu)
+- Automated email generation for faculty (format: name.id@faculty.college.edu)
 - Course Management for adding, updating, and deleting courses
+- Course assignment by ID instead of name for better accuracy
 - Efficient search capabilities for finding users by ID or name
-- Data persistence through file I/O operations for student and faculty records
+- Data persistence through CSV file storage for all records
 
 ### Student Management
 - Profile viewing and updating through object-oriented encapsulation
 - Course enrollment tracking using CustomArrayList references
 - Book issuance history maintained through student-book associations
+- Admission year tracking and integration with email system
+- Automated unique email generation based on name, ID, and admission year
 
 ### Faculty Operations
 - Attendance tracking system using CustomHashMap where:
   - Keys: Date strings
   - Values: CustomArrayList of present student IDs
-- Subject assignment and management
+- Subject assignment using course IDs for precise mapping
 - Class assignment logic for organizing teaching workload
+- Automated email generation for consistent communication
 
 ### Library System
 - Book checkout implemented with CustomQueue for fair processing order
@@ -86,7 +97,7 @@ The system follows a layered architecture:
 - **auth**: Authentication and authorization logic
 - **admin/student/faculty/library**: Role-specific functionality
 - **course**: Course management operations
-- **data**: Sample data for testing and demonstration
+- **data**: CSV files for persistent storage
 - **util**: Helper utilities for file operations, console I/O, and validation
 - **main**: Application entry point and initialization
 
@@ -120,6 +131,11 @@ ICMS/
 │   │   ├── CourseManagement.java
 │   ├── main/
 │   │   ├── ICMS.java
+├── data/
+│   ├── students.csv
+│   ├── faculty.csv
+│   ├── courses.csv
+│   ├── books.csv
 ├── README.md
 ```
 
