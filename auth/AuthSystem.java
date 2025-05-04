@@ -14,9 +14,9 @@ public class AuthSystem {
     private CustomHashMap<String, String> roles;
     private CustomArrayList<String> allUserIds;
     private static final String CREDENTIALS_FILE = "credentials.csv";
-    private static final String ROLES_FILE = "roles.csv";
-    
-    private String currentUsername; 
+    // private static final String ROLES_FILE = "roles.csv";
+
+    private String currentUsername;
 
     private static final int MIN_PASSWORD_LENGTH = 6;
     private static final boolean REQUIRE_UPPERCASE = true;
@@ -47,11 +47,11 @@ public class AuthSystem {
         if (storedHash != null && verifyPassword(password, storedHash)) {
             String role = roles.get(username);
             currentUsername = username;
-            return role; 
+            return role;
         }
         return null;
     }
-    
+
     public String getCurrentUsername() {
         return currentUsername;
     }
@@ -234,7 +234,7 @@ public class AuthSystem {
             if (credentialLines.size() > 0 && credentialLines.get(0).startsWith("username,password")) {
                 startIndex = 1;
             }
-            
+
             for (int i = startIndex; i < credentialLines.size(); i++) {
                 String line = credentialLines.get(i);
                 String[] parts = line.split(",");

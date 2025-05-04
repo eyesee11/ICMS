@@ -5,22 +5,26 @@ public class Student {
     private String name;
     private String email;
     private String stream;
+    private int admissionYear;
     private ds.CustomArrayList<String> courses;
     private ds.CustomArrayList<String> issuedBooks;
     private ds.CustomHashMap<String, Boolean> attendance;
 
     /**
      * Constructor for Student
-     * @param id Student unique identifier
-     * @param name Student name
-     * @param email Student email
-     * @param stream Student's department/stream
+     * 
+     * @param id            Student unique identifier
+     * @param name          Student name
+     * @param email         Student email
+     * @param stream        Student's department/stream
+     * @param admissionYear Year of admission
      */
-    public Student(String id, String name, String email, String stream) {
+    public Student(String id, String name, String email, String stream, int admissionYear) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.stream = stream;
+        this.admissionYear = admissionYear;
         this.courses = new ds.CustomArrayList<>();
         this.issuedBooks = new ds.CustomArrayList<>();
         this.attendance = new ds.CustomHashMap<>();
@@ -28,6 +32,7 @@ public class Student {
 
     /**
      * Get student ID
+     * 
      * @return Student ID
      */
     public String getId() {
@@ -36,6 +41,7 @@ public class Student {
 
     /**
      * Get student name
+     * 
      * @return Student name
      */
     public String getName() {
@@ -44,6 +50,7 @@ public class Student {
 
     /**
      * Set student name
+     * 
      * @param name New student name
      */
     public void setName(String name) {
@@ -52,6 +59,7 @@ public class Student {
 
     /**
      * Get student email
+     * 
      * @return Student email
      */
     public String getEmail() {
@@ -60,6 +68,7 @@ public class Student {
 
     /**
      * Set student email
+     * 
      * @param email New student email
      */
     public void setEmail(String email) {
@@ -68,6 +77,7 @@ public class Student {
 
     /**
      * Get student stream/department
+     * 
      * @return Stream or department
      */
     public String getStream() {
@@ -76,6 +86,7 @@ public class Student {
 
     /**
      * Set student stream/department
+     * 
      * @param stream New stream or department
      */
     public void setStream(String stream) {
@@ -83,7 +94,26 @@ public class Student {
     }
 
     /**
+     * Get admission year
+     * 
+     * @return Admission year
+     */
+    public int getAdmissionYear() {
+        return admissionYear;
+    }
+
+    /**
+     * Set admission year
+     * 
+     * @param admissionYear New admission year
+     */
+    public void setAdmissionYear(int admissionYear) {
+        this.admissionYear = admissionYear;
+    }
+
+    /**
      * Get courses enrolled by student
+     * 
      * @return List of courses
      */
     public ds.CustomArrayList<String> getCourses() {
@@ -92,30 +122,34 @@ public class Student {
 
     /**
      * Add course to student's enrollment
+     * 
      * @param course Course to add
      */
     public void addCourse(String course) {
         courses.add(course);
     }
-    
+
     /**
      * Get books issued to student
+     * 
      * @return List of issued book IDs
      */
     public ds.CustomArrayList<String> getIssuedBooks() {
         return issuedBooks;
     }
-    
+
     /**
      * Issue a book to student
+     * 
      * @param bookId ID of book to issue
      */
     public void issueBook(String bookId) {
         issuedBooks.add(bookId);
     }
-    
+
     /**
      * Return a book from student
+     * 
      * @param bookId ID of book to return
      */
     public void returnBook(String bookId) {
@@ -126,18 +160,20 @@ public class Student {
             }
         }
     }
-    
+
     /**
      * Get student's attendance record
+     * 
      * @return Map of date to attendance status
      */
     public ds.CustomHashMap<String, Boolean> getAttendance() {
         return attendance;
     }
-    
+
     /**
      * Mark student's attendance for a date
-     * @param date Date in string format
+     * 
+     * @param date    Date in string format
      * @param present Whether student was present
      */
     public void markAttendance(String date, boolean present) {

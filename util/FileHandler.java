@@ -19,8 +19,10 @@ public class FileHandler {
 
     /**
      * Save data to a file
-     * @param filename The filename to save to (will be placed in the data directory)
-     * @param lines The lines to write to the file
+     * 
+     * @param filename The filename to save to (will be placed in the data
+     *                 directory)
+     * @param lines    The lines to write to the file
      */
     public static void saveToFile(String filename, CustomArrayList<String> lines) {
         String filePath = DATA_DIRECTORY + File.separator + filename;
@@ -37,6 +39,7 @@ public class FileHandler {
 
     /**
      * Read data from a file
+     * 
      * @param filename The filename to read from (will look in the data directory)
      * @return CustomArrayList containing the lines from the file
      */
@@ -63,6 +66,7 @@ public class FileHandler {
 
     /**
      * Delete a file
+     * 
      * @param filename The filename to delete (will look in the data directory)
      * @return true if deletion was successful, false otherwise
      */
@@ -79,6 +83,7 @@ public class FileHandler {
 
     /**
      * Check if a file exists
+     * 
      * @param filename The filename to check (will look in the data directory)
      * @return true if file exists, false otherwise
      */
@@ -90,16 +95,18 @@ public class FileHandler {
 
     /**
      * Save students to CSV file
+     * 
      * @param students The list of students to save
      */
     public static void saveStudents(CustomArrayList<Student> students) {
         CustomArrayList<String> lines = new CustomArrayList<>();
-        lines.add("id,name,email,stream");
+        lines.add("id,name,email,stream,admissionYear");
 
         for (int i = 0; i < students.size(); i++) {
             Student student = students.get(i);
             lines.add(student.getId() + "," + student.getName() + "," +
-                    student.getEmail() + "," + student.getStream());
+                    student.getEmail() + "," + student.getStream() + "," +
+                    student.getAdmissionYear());
         }
 
         saveToFile("students.csv", lines);
@@ -107,21 +114,36 @@ public class FileHandler {
 
     /**
      * Load students from CSV file
+     * 
      * @return List of students loaded from CSV
      */
     public static CustomArrayList<Student> loadStudents() {
         CustomArrayList<Student> students = new CustomArrayList<>();
         CustomArrayList<String> lines = readFromFile("students.csv");
 
-        for (int i = 1; i < lines.size(); i++) {
+        // Skip header line if it exists
+        int startIndex = lines.size() > 0 && lines.get(0).startsWith("id,") ? 1 : 0;
+
+        for (int i = startIndex; i < lines.size(); i++) {
             String[] parts = lines.get(i).split(",");
-            if (parts.length >= 4) {
+            if (parts.length >= 5) {
                 String id = parts[0];
                 String name = parts[1];
                 String email = parts[2];
                 String stream = parts[3];
+                int admissionYear = Integer.parseInt(parts[4]);
 
-                students.add(new Student(id, name, email, stream));
+                students.add(new Student(id, name, email, stream, admissionYear));
+            } else if (parts.length >= 4) {
+                // Handle old format files without admission year
+                String id = parts[0];
+                String name = parts[1];
+                String email = parts[2];
+                String stream = parts[3];
+                // Use current year as default for old records
+                int currentYear = java.time.Year.now().getValue();
+
+                students.add(new Student(id, name, email, stream, currentYear));
             }
         }
 
@@ -130,6 +152,7 @@ public class FileHandler {
 
     /**
      * Save faculty to CSV file
+     * 
      * @param faculty The list of faculty to save
      */
     public static void saveFaculty(CustomArrayList<Faculty> faculty) {
@@ -146,6 +169,7 @@ public class FileHandler {
 
     /**
      * Load faculty from CSV file
+     * 
      * @return List of faculty loaded from CSV
      */
     public static CustomArrayList<Faculty> loadFaculty() {
@@ -168,6 +192,7 @@ public class FileHandler {
 
     /**
      * Save courses to CSV file
+     * 
      * @param courses The list of courses to save
      */
     public static void saveCourses(CustomArrayList<Course> courses) {
@@ -186,6 +211,7 @@ public class FileHandler {
 
     /**
      * Load courses from CSV file
+     * 
      * @return List of courses loaded from CSV
      */
     public static CustomArrayList<Course> loadCourses() {
@@ -211,6 +237,7 @@ public class FileHandler {
 
     /**
      * Save books to CSV file
+     * 
      * @param books The list of books to save
      */
     public static void saveBooks(CustomArrayList<Book> books) {
@@ -228,6 +255,7 @@ public class FileHandler {
 
     /**
      * Load books from CSV file
+     * 
      * @return List of books loaded from CSV
      */
     public static CustomArrayList<Book> loadBooks() {
@@ -253,8 +281,9 @@ public class FileHandler {
 
     /**
      * Save faculty subjects
+     * 
      * @param facultyId The faculty ID
-     * @param subjects List of subjects
+     * @param subjects  List of subjects
      */
     public static void saveFacultySubjects(String facultyId, CustomArrayList<String> subjects) {
         saveToFile("faculty_" + facultyId + "_subjects.txt", subjects);
@@ -262,6 +291,7 @@ public class FileHandler {
 
     /**
      * Load faculty subjects
+     * 
      * @param facultyId The faculty ID
      * @return List of subjects
      */
@@ -271,8 +301,9 @@ public class FileHandler {
 
     /**
      * Save faculty classes
+     * 
      * @param facultyId The faculty ID
-     * @param classes List of classes
+     * @param classes   List of classes
      */
     public static void saveFacultyClasses(String facultyId, CustomArrayList<String> classes) {
         saveToFile("faculty_" + facultyId + "_classes.txt", classes);
@@ -280,6 +311,7 @@ public class FileHandler {
 
     /**
      * Load faculty classes
+     * 
      * @param facultyId The faculty ID
      * @return List of classes
      */
@@ -289,8 +321,9 @@ public class FileHandler {
 
     /**
      * Save student courses
+     * 
      * @param studentId The student ID
-     * @param courses List of courses
+     * @param courses   List of courses
      */
     public static void saveStudentCourses(String studentId, CustomArrayList<String> courses) {
         saveToFile("student_" + studentId + "_courses.txt", courses);
@@ -298,6 +331,7 @@ public class FileHandler {
 
     /**
      * Load student courses
+     * 
      * @param studentId The student ID
      * @return List of courses
      */

@@ -30,7 +30,7 @@ public class ICMS {
     public static void main(String[] args) {
         adminPanel.setCourseManagement(courseManagement);
         CourseData.loadSampleCourses(courseManagement);
-    
+
         CustomArrayList<Book> booksFromCSV = FileHandler.loadBooks();
         if (booksFromCSV.size() > 0) {
             for (int i = 0; i < booksFromCSV.size(); i++) {
@@ -202,11 +202,22 @@ public class ICMS {
                     System.out.print("Enter student name: ");
                     String name = scanner.nextLine();
 
-                    String email = ConsoleUtil.readEmail("Enter student email: ");
-
                     String stream = ConsoleUtil.selectStream();
 
-                    adminPanel.addStudent(new Student(id, name, email, stream));
+                    int admissionYear = 0;
+                    while (admissionYear < 2000 || admissionYear > 2100) {
+                        System.out.print("Enter admission year (YYYY): ");
+                        try {
+                            admissionYear = Integer.parseInt(scanner.nextLine());
+                            if (admissionYear < 2000 || admissionYear > 2100) {
+                                System.out.println("Please enter a valid year between 2000 and 2100!");
+                            }
+                        } catch (NumberFormatException e) {
+                            System.out.println("Please enter a valid year!");
+                        }
+                    }
+
+                    adminPanel.addStudent(new Student(id, name, "", stream, admissionYear));
                     ConsoleUtil.pressEnterToContinue();
                     break;
                 case 2:
@@ -221,22 +232,11 @@ public class ICMS {
                             newName = student.getName();
                         }
 
-                        System.out.print("Enter new email (current: " + student.getEmail() + "): ");
-                        String newEmail = scanner.nextLine();
-                        if (!ValidationUtil.isNullOrEmpty(newEmail)) {
-                            if (!ValidationUtil.isValidEmail(newEmail)) {
-                                newEmail = ValidationUtil.fixEmailDomain(newEmail);
-                                System.out.println("Email fixed to: " + newEmail);
-                            }
-                        } else {
-                            newEmail = student.getEmail();
-                        }
-
                         System.out.println("Current stream: " + student.getStream());
                         System.out.println("Enter new stream or leave blank to keep current: ");
                         String newStream = ConsoleUtil.selectStream();
 
-                        adminPanel.updateStudent(updateId, newName, newEmail, newStream);
+                        adminPanel.updateStudent(updateId, newName, "", newStream);
                     } else {
                         System.out.println("Student not found with ID: " + updateId);
                     }
@@ -320,9 +320,7 @@ public class ICMS {
                     System.out.print("Enter faculty name: ");
                     String name = scanner.nextLine();
 
-                    String email = ConsoleUtil.readEmail("Enter faculty email: ");
-
-                    adminPanel.addFaculty(new Faculty(id, name, email));
+                    adminPanel.addFaculty(new Faculty(id, name, ""));
                     ConsoleUtil.pressEnterToContinue();
                     break;
                 case 2:
@@ -337,18 +335,7 @@ public class ICMS {
                             newName = faculty.getName();
                         }
 
-                        System.out.print("Enter new email (current: " + faculty.getEmail() + "): ");
-                        String newEmail = scanner.nextLine();
-                        if (!ValidationUtil.isNullOrEmpty(newEmail)) {
-                            if (!ValidationUtil.isValidEmail(newEmail)) {
-                                newEmail = ValidationUtil.fixEmailDomain(newEmail);
-                                System.out.println("Email fixed to: " + newEmail);
-                            }
-                        } else {
-                            newEmail = faculty.getEmail();
-                        }
-
-                        adminPanel.updateFaculty(updateId, newName, newEmail);
+                        adminPanel.updateFaculty(updateId, newName, "");
                     } else {
                         System.out.println("Faculty not found with ID: " + updateId);
                     }
@@ -383,9 +370,10 @@ public class ICMS {
                     String facultyId = scanner.nextLine();
                     Faculty facultyMember = adminPanel.searchFaculty(facultyId);
                     if (facultyMember != null) {
-                        System.out.print("Enter subject to assign: ");
-                        String subject = scanner.nextLine();
-                        adminPanel.assignSubjectToFaculty(facultyId, subject);
+                        courseManagement.viewCourses();
+                        System.out.print("\nEnter course ID to assign as subject: ");
+                        String courseId = scanner.nextLine();
+                        adminPanel.assignSubjectToFaculty(facultyId, courseId);
                     } else {
                         System.out.println("Faculty not found with ID: " + facultyId);
                     }
@@ -447,12 +435,7 @@ public class ICMS {
                         name = student.getName();
                     }
 
-                    String email = ConsoleUtil.readEmail("Enter new email (current: " + student.getEmail() + "): ");
-                    if (ValidationUtil.isNullOrEmpty(email)) {
-                        email = student.getEmail();
-                    }
-
-                    studentPanel.updateProfile(name, email);
+                    studentPanel.updateProfile(name, "");
                     ConsoleUtil.pressEnterToContinue();
                     break;
                 case 3:
@@ -538,12 +521,7 @@ public class ICMS {
                         name = faculty.getName();
                     }
 
-                    String email = ConsoleUtil.readEmail("Enter new email (current: " + faculty.getEmail() + "): ");
-                    if (ValidationUtil.isNullOrEmpty(email)) {
-                        email = faculty.getEmail();
-                    }
-
-                    facultyPanel.updateProfile(name, email);
+                    facultyPanel.updateProfile(name, "");
                     ConsoleUtil.pressEnterToContinue();
                     break;
                 case 3:
@@ -633,7 +611,7 @@ public class ICMS {
             System.out.println("=========================");
             System.out.println("Library System");
             System.out.println("=========================");
-            
+
             // Different menu based on user role
             if ("LIBRARY".equals(currentUserRole)) {
                 System.out.println("1. Issue Book");
@@ -647,7 +625,7 @@ public class ICMS {
                 // Enhanced menu for students and faculty
                 System.out.println("1. View Available Books");
                 System.out.println("2. View My Issued Books");
-                System.out.println("3. Issue/Borrow a Book");  
+                System.out.println("3. Issue/Borrow a Book");
                 System.out.println("4. Return Book");
                 System.out.println("5. Search Book by Title");
                 System.out.println("6. Back to Main Menu");
@@ -768,12 +746,13 @@ public class ICMS {
                         System.out.print("\nEnter book title to request: ");
                         String bookTitle = scanner.nextLine();
                         Book book = library.linearSearchByTitle(allBooks, bookTitle);
-                        
+
                         if (book != null && !book.isIssued()) {
                             if (currentStudent != null) {
                                 // Check if student already has 3 or more books
                                 if (currentStudent.getIssuedBooks().size() >= 3) {
-                                    System.out.println("You have reached the maximum limit of 3 books. Please return a book first.");
+                                    System.out.println(
+                                            "You have reached the maximum limit of 3 books. Please return a book first.");
                                 } else {
                                     System.out.println("Book '" + book.getTitle() + "' requested successfully.");
                                     System.out.println("Please visit the library desk to get your book issued.");
@@ -782,7 +761,8 @@ public class ICMS {
                             } else if (currentFaculty != null) {
                                 // Faculty can issue up to 5 books
                                 if (currentFaculty.getIssuedBooks().size() >= 5) {
-                                    System.out.println("You have reached the maximum limit of 5 books. Please return a book first.");
+                                    System.out.println(
+                                            "You have reached the maximum limit of 5 books. Please return a book first.");
                                 } else {
                                     System.out.println("Book '" + book.getTitle() + "' requested successfully.");
                                     System.out.println("Please visit the library desk to get your book issued.");
@@ -814,7 +794,7 @@ public class ICMS {
                                             break;
                                         }
                                     }
-                                    
+
                                     if (hasIssuedBook) {
                                         library.returnBook(currentStudent, returnBook);
                                     } else {
@@ -842,7 +822,7 @@ public class ICMS {
                                             break;
                                         }
                                     }
-                                    
+
                                     if (hasIssuedBook) {
                                         library.returnBook(currentFaculty, returnBook);
                                     } else {
@@ -944,7 +924,7 @@ public class ICMS {
                     System.out.print("\nEnter book ID to update: ");
                     String bookId = scanner.nextLine();
                     Book bookToUpdate = null;
-                    
+
                     for (int i = 0; i < allBooks.size(); i++) {
                         Book b = allBooks.get(i);
                         if (b.getId().equals(bookId)) {
@@ -952,20 +932,20 @@ public class ICMS {
                             break;
                         }
                     }
-                    
+
                     if (bookToUpdate != null) {
                         System.out.print("Enter new title (current: " + bookToUpdate.getTitle() + "): ");
                         String newTitle = scanner.nextLine();
                         if (!ValidationUtil.isNullOrEmpty(newTitle)) {
                             bookToUpdate.setTitle(newTitle);
                         }
-                        
+
                         System.out.print("Enter new author (current: " + bookToUpdate.getAuthor() + "): ");
                         String newAuthor = scanner.nextLine();
                         if (!ValidationUtil.isNullOrEmpty(newAuthor)) {
                             bookToUpdate.setAuthor(newAuthor);
                         }
-                        
+
                         // Save books to CSV after updating
                         FileHandler.saveBooks(allBooks);
                         System.out.println("Book updated successfully.");
@@ -980,7 +960,7 @@ public class ICMS {
                     String removeId = scanner.nextLine();
                     Book bookToRemove = null;
                     int indexToRemove = -1;
-                    
+
                     for (int i = 0; i < allBooks.size(); i++) {
                         Book b = allBooks.get(i);
                         if (b.getId().equals(removeId)) {
@@ -989,12 +969,13 @@ public class ICMS {
                             break;
                         }
                     }
-                    
+
                     if (bookToRemove != null) {
                         if (bookToRemove.isIssued()) {
                             System.out.println("Cannot remove book as it is currently issued.");
                         } else {
-                            System.out.print("Are you sure you want to remove '" + bookToRemove.getTitle() + "' (y/n)? ");
+                            System.out
+                                    .print("Are you sure you want to remove '" + bookToRemove.getTitle() + "' (y/n)? ");
                             String confirm = scanner.nextLine().trim().toLowerCase();
                             if (confirm.equals("y") || confirm.equals("yes")) {
                                 allBooks.remove(indexToRemove);

@@ -2,3 +2,5 @@ id,name,email,subject,class_id
 F001,gopal,gopal@gmail.com,DSA,101 ;105
 F002,ram,ram@gmail.com,JAVA,102
 F003,mohan,mo@gmail.com,DS,
+F004,ayush,faculty@gmail.com,Maths;Operating Systems,203
+F005,heinnn,heinnn.f005@faculty.college.edu,,

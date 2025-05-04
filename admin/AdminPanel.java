@@ -19,7 +19,7 @@ public class AdminPanel {
 
     private static final String STUDENTS_FILE = "students.csv";
     private static final String FACULTY_FILE = "faculty.csv";
-    private static final String COURSES_FILE = "courses.csv";
+    // private static final String COURSES_FILE = "courses.csv";
 
     public AdminPanel(AuthSystem authSystem) {
         this.authSystem = authSystem;
@@ -45,6 +45,10 @@ public class AdminPanel {
             return;
         }
 
+        // Generate email based on ID, name, and admission year
+        String email = generateStudentEmail(student.getName(), student.getId(), student.getAdmissionYear());
+        student.setEmail(email);
+
         students.add(student);
         saveStudents();
 
@@ -52,6 +56,26 @@ public class AdminPanel {
         authSystem.createStudentCredentials(student);
 
         System.out.println("Student added successfully: " + student.getName());
+        System.out.println("Generated email: " + email);
+    }
+
+    /**
+     * Generate a unique email address for students based on name, ID, and admission
+     * year
+     * 
+     * @param name          The name of the student
+     * @param id            The ID of the student
+     * @param admissionYear The year of admission
+     * @return A unique email address
+     */
+    private String generateStudentEmail(String name, String id, int admissionYear) {
+        // Remove spaces and special characters from name
+        String cleanName = name.toLowerCase()
+                .replaceAll("\\s+", "")
+                .replaceAll("[^a-zA-Z0-9]", "");
+
+        // Create email using name, admission year, and ID
+        return cleanName + admissionYear + "." + id.toLowerCase() + "@student.college.edu";
     }
 
     public void updateStudent(String id, String name, String email, String stream) {
@@ -145,6 +169,10 @@ public class AdminPanel {
             return;
         }
 
+        // Generate email based on ID and name
+        String email = generateFacultyEmail(facultyMember.getName(), facultyMember.getId());
+        facultyMember.setEmail(email);
+
         faculty.add(facultyMember);
         saveFaculty();
 
@@ -152,6 +180,24 @@ public class AdminPanel {
         authSystem.createFacultyCredentials(facultyMember);
 
         System.out.println("Faculty added successfully: " + facultyMember.getName());
+        System.out.println("Generated email: " + email);
+    }
+
+    /**
+     * Generate a unique email address for faculty
+     * 
+     * @param name The name of the faculty
+     * @param id   The ID of the faculty
+     * @return A unique email address
+     */
+    private String generateFacultyEmail(String name, String id) {
+        // Remove spaces and special characters from name
+        String cleanName = name.toLowerCase()
+                .replaceAll("\\s+", "")
+                .replaceAll("[^a-zA-Z0-9]", "");
+
+        // Create email using name and ID
+        return cleanName + "." + id.toLowerCase() + "@faculty.college.edu";
     }
 
     public void updateFaculty(String id, String name, String email) {
@@ -237,12 +283,27 @@ public class AdminPanel {
         return null;
     }
 
-    public void assignSubjectToFaculty(String facultyId, String subject) {
+    public void assignSubjectToFaculty(String facultyId, String courseId) {
         Faculty facultyMember = searchFaculty(facultyId);
         if (facultyMember != null) {
-            facultyMember.addSubject(subject);
-            saveFaculty();
-            System.out.println("Subject '" + subject + "' assigned to " + facultyMember.getName());
+            if (courseManagement != null) {
+                // Display available courses
+                System.out.println("\nAvailable Courses:");
+                courseManagement.viewCourses();
+
+                // Get course details
+                Course course = courseManagement.searchCourseById(courseId);
+                if (course != null) {
+                    facultyMember.addSubject(course.getName());
+                    course.setAssignedFaculty(facultyMember.getName());
+                    saveFaculty();
+                    System.out.println("Course '" + course.getName() + "' assigned to " + facultyMember.getName());
+                } else {
+                    System.out.println("Course not found with ID: " + courseId);
+                }
+            } else {
+                System.out.println("Course management system not initialized!");
+            }
         } else {
             System.out.println("Faculty with ID " + facultyId + " not found.");
         }
@@ -738,6 +799,7 @@ public class AdminPanel {
                     line.append(student.getName()).append(",");
                     line.append(student.getEmail()).append(",");
                     line.append(student.getStream()).append(",");
+                    line.append(student.getAdmissionYear()).append(",");
 
                     // Add courses (as a semicolon-separated list)
                     CustomArrayList<String> courses = student.getCourses();
@@ -810,17 +872,18 @@ public class AdminPanel {
             CustomArrayList<String> lines = FileHandler.readFromFile(STUDENTS_FILE);
             for (int i = 0; i < lines.size(); i++) {
                 String[] data = lines.get(i).split(",");
-                if (data.length >= 4) {
+                if (data.length >= 5) {
                     String id = data[0];
                     String name = data[1];
                     String email = data[2];
                     String stream = data[3];
+                    int admissionYear = Integer.parseInt(data[4]);
 
-                    Student student = new Student(id, name, email, stream);
+                    Student student = new Student(id, name, email, stream, admissionYear);
 
                     // Add courses
-                    if (data.length > 4) {
-                        String[] courses = data[4].split(";");
+                    if (data.length > 5) {
+                        String[] courses = data[5].split(";");
                         for (String course : courses) {
                             if (!course.trim().isEmpty()) {
                                 student.addCourse(course);

@@ -33,4 +33,70 @@ Changes Made to ICMS (Integrated College Management System)
    - Changed course assignment to use course names instead of course IDs for better usability
    - Added more robust role checking in student and faculty access control
 
+6. Faculty Course Assignment Improvements:
+   - Modified the course assignment process to use course IDs instead of course names
+   - Updated the UI to display available courses and prompt for course ID
+   - Improved error messages to reference course IDs
+   - Enhanced the validation to check for valid course IDs
+
+7. Identified Edge Cases and Required Error Handling:
+
+   Authentication System:
+   - Handle password hashing failures
+   - Implement concurrent login management
+   - Add session timeout and logout functionality
+   - Implement rate limiting for failed login attempts
+   - Add password expiry mechanism
+   - Force password change on first login
+   - Implement account lockout after multiple failed attempts
+
+   Student Management:
+   - Prevent duplicate email addresses
+   - Validate email format consistently
+   - Handle student deletion with dependencies (books/courses)
+   - Validate course capacity before assignment
+   - Handle special characters in names
+   - Implement proper stream validation
+
+   Faculty Management:
+   - Validate class assignments
+   - Implement subject qualification checks
+   - Handle schedule conflicts
+   - Validate attendance marking dates
+   - Verify student-class relationship for attendance
+
+   Library System:
+   - Implement book limit per student
+   - Add damage reporting system
+   - Create reservation system
+   - Prevent duplicate book IDs
+   - Add fine calculation system
+   - Improve book search (case-insensitive, special characters)
+   - Handle overdue books
+
+   Course Management:
+   - Validate course fees (prevent negative/zero)
+   - Implement proper duration validation
+   - Add capacity management
+   - Handle course prerequisites
+   - Manage course deletion with enrolled students
+   - Prevent duplicate course names
+   - Handle schedule conflicts
+
+4. Email Generation System:
+   - Implemented automatic email generation for students and faculty
+   - Student emails now include admission year: cleanname[admissionyear].id@student.college.edu
+   - Faculty emails format: cleanname.id@faculty.college.edu
+   - Removed manual email input from all forms
+   - Added email display after user creation
+   - Prevents email duplicacy and ensures consistent format
+
+5. Student Admission Year:
+   - Added admission year field to Student model
+   - Updated student creation to require admission year input
+   - Added validation for admission year (2000-2100)
+   - Modified CSV storage to include admission year
+   - Updated student profile display to show admission year
+   - Integrated admission year into email generation system
+
 Note: The system was already set up to handle CSV files through the FileHandler class, making the transition from .dat to CSV format seamless without requiring major code changes. 
