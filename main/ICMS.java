@@ -151,7 +151,8 @@ public class ICMS {
             System.out.println("2. Faculty Administration");
             System.out.println("3. Course Administration");
             System.out.println("4. Library Management");
-            System.out.println("5. Back to Main Menu");
+            System.out.println("5. Reset User Password");
+            System.out.println("6. Back to Main Menu");
 
             int choice = getIntInput("Choose an option: ");
 
@@ -169,6 +170,17 @@ public class ICMS {
                     handleAdminLibraryManagement();
                     break;
                 case 5:
+                    System.out.println("\nReset User Password");
+                    System.out.println("===================");
+                    adminPanel.viewAllStudents();
+                    System.out.println("\nFaculty Members:");
+                    adminPanel.viewAllFaculty();
+                    System.out.print("\nEnter user ID to reset password: ");
+                    String userId = scanner.nextLine();
+                    adminPanel.resetUserPassword(userId);
+                    ConsoleUtil.pressEnterToContinue();
+                    break;
+                case 6:
                     back = true;
                     break;
                 default:

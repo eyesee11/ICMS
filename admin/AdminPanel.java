@@ -940,4 +940,20 @@ public class AdminPanel {
             System.out.println("Error loading faculty data: " + e.getMessage());
         }
     }
+
+    public void resetUserPassword(String userId) {
+        if (authSystem.getUserRole(userId) == null) {
+            System.out.println("User not found with ID: " + userId);
+            return;
+        }
+
+        String newPassword = authSystem.resetPassword(userId);
+        if (newPassword != null) {
+            System.out.println("Password reset successful for user: " + userId);
+            System.out.println("New temporary password: " + newPassword);
+            System.out.println("Please inform the user to change their password upon next login.");
+        } else {
+            System.out.println("Failed to reset password for user: " + userId);
+        }
+    }
 }
